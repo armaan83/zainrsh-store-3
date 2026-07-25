@@ -219,6 +219,18 @@ function doGet(e) {
       message: "Zainrsh catalog webhook is live."
     });
   }
+  // Isolated GitHub-write test: proves whether appendProductToJson actually works.
+  if (params.testwrite === "1") {
+    try {
+      const before = getProductsJson().products.length;
+      const test = { id: "diag-test-" + new Date().getTime(), category: "Diag", name: "Diag Test", price: 1, mrp: 0, description: "write test", image: "https://via.placeholder.com/1.png", inStock: true };
+      appendProductToJson(test);
+      const after = getProductsJson().products.length;
+      return jsonOut({ ok: true, testwrite: "APPENDED", before: before, after: after, succeeded: after === before + 1 });
+    } catch (e) {
+      return jsonOut({ ok: false, testwrite: "THREW", error: String(e && e.message ? e.message : e) });
+    }
+  }
   return jsonOut({ ok: true, message: "Zainrsh catalog webhook is live." });
 }
 
