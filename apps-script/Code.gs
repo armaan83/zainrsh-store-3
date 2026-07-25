@@ -715,13 +715,17 @@ function syncProductsToSite() {
   catch (err) { return "❌ Failed to read sheet: " + err.message; }
 
   const sheetIds = {};
-  sheetProducts.forEach(function (p) { sheetIds[p.id] = true; });
+  const sheetNames = {};
+  sheetProducts.forEach(function (p) { sheetIds[p.id] = true; sheetNames[slugify(p.name || "")] = true; });
 
   let merged = sheetProducts.slice();
   try {
     const existing = getProductsJson().products || [];
     existing.forEach(function (p) {
-      if (p && p.id && !sheetIds[p.id]) merged.push(p); // keep bot-added product
+      // keep bot-added product ONLY if it's not already represented in the sheet
+      // — by id OR by name (so the same product never appears twice just because
+      // the bot used a timestamped id and the sheet uses a clean slug).
+      if (p && p.id && !sheetIds[p.id] && !sheetNames[slugify(p.name || "")]) merged.push(p);
     });
   } catch (e) { /* no existing file yet — fine */ }
 
