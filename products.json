@@ -1,0 +1,12 @@
+[
+  {
+    "id": "test-probe-02019",
+    "name": "Bot Probe Earring",
+    "category": "Earrings",
+    "price": 123.0,
+    "mrp": 456.0,
+    "description": "end-to-end test product",
+    "image": "images/test-bot-probe-1785002018.png",
+    "inStock": true
+  }
+]
