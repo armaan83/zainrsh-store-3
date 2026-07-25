@@ -8,15 +8,5 @@
     "image": "images/mera-necklace-1785002421.jpg",
     "id": "mera-necklace-02422",
     "inStock": true
-  },
-  {
-    "id": "sheet-test-1785020080901",
-    "category": "Bracelets",
-    "name": "Sheet Sync Test",
-    "price": 350,
-    "mrp": 500,
-    "image": "https://via.placeholder.com/300",
-    "description": "temp validation row",
-    "inStock": true
   }
 ]
