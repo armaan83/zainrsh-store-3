@@ -20,6 +20,16 @@
     "inStock": true
   },
   {
+    "id": "kastu",
+    "category": "Ear Ring",
+    "name": "Kastu",
+    "price": 229,
+    "mrp": 377,
+    "image": "https://postimg.cc/F1qCQYtb",
+    "description": "",
+    "inStock": true
+  },
+  {
     "name": "Mera Necklace",
     "category": "Necklace",
     "price": 449,
