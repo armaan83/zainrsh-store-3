@@ -307,14 +307,17 @@ function appendProductToJson(product) {
   const cur = getProductsJson();
   const products = cur.products || [];
   products.push(product);
-  const content = Utilities.base64EncodeWebSafe(JSON.stringify(products, null, 2));
+  const content = Utilities.base64Encode(JSON.stringify(products, null, 2));
   const api = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + GH_PRODUCTS_FILE;
   const payload = { message: "Update catalog (" + products.length + " products)", content: content, branch: GH_BRANCH };
   if (cur.sha) payload.sha = cur.sha;
-  UrlFetchApp.fetch(api, {
+  const res = UrlFetchApp.fetch(api, {
     method: "put", contentType: "application/json",
     headers: githubAuth(), payload: JSON.stringify(payload), muteHttpExceptions: true
   });
+  if (res.getResponseCode() !== 200 && res.getResponseCode() !== 201) {
+    throw new Error("GitHub PUT products.json failed: HTTP " + res.getResponseCode() + " " + res.getContentText().slice(0, 160));
+  }
 }
 
 function listProducts() {
@@ -332,10 +335,13 @@ function deleteProduct(id) {
   const before = (cur.products || []).length;
   const after = (cur.products || []).filter(function (p) { return p.id !== id; });
   if (after.length === before) return "❌ No product with id `" + id + "`.";
-  const content = Utilities.base64EncodeWebSafe(JSON.stringify(after, null, 2));
+  const content = Utilities.base64Encode(JSON.stringify(after, null, 2));
   const api = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + GH_PRODUCTS_FILE;
   const payload = { message: "Delete product " + id, content: content, branch: GH_BRANCH, sha: cur.sha };
-  UrlFetchApp.fetch(api, { method: "put", contentType: "application/json", headers: githubAuth(), payload: JSON.stringify(payload), muteHttpExceptions: true });
+  const res = UrlFetchApp.fetch(api, { method: "put", contentType: "application/json", headers: githubAuth(), payload: JSON.stringify(payload), muteHttpExceptions: true });
+  if (res.getResponseCode() !== 200 && res.getResponseCode() !== 201) {
+    return "❌ Delete failed: HTTP " + res.getResponseCode() + " " + res.getContentText().slice(0, 120);
+  }
   return "🗑 Deleted `" + id + "`. " + after.length + " products remain.";
 }
 
@@ -502,7 +508,7 @@ function seedProductsToJson() {
   const products = seed.map(function (r) {
     return { id: r[0], category: r[1], name: r[2], price: r[3], mrp: r[4], image: r[5], description: r[6], inStock: true };
   });
-  const content = Utilities.base64EncodeWebSafe(JSON.stringify(products, null, 2));
+  const content = Utilities.base64Encode(JSON.stringify(products, null, 2));
   const api = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + GH_PRODUCTS_FILE;
   const cur = getProductsJson();
   const payload = { message: "Seed catalog", content: content, branch: GH_BRANCH };
