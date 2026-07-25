@@ -8,5 +8,15 @@
     "image": "images/mera-necklace-1785002421.jpg",
     "id": "mera-necklace-02422",
     "inStock": true
+  },
+  {
+    "id": "diag-test-1785016320201",
+    "category": "Diag",
+    "name": "Diag Test",
+    "price": 1,
+    "mrp": 0,
+    "description": "write test",
+    "image": "https://via.placeholder.com/1.png",
+    "inStock": true
   }
 ]
