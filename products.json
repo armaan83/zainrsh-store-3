@@ -19,5 +19,16 @@
     "photo": null,
     "id": "test-ring-one-31477",
     "inStock": true
+  },
+  {
+    "name": "Test Ring Two",
+    "category": "Uncategorized",
+    "price": 350,
+    "mrp": 350,
+    "description": "",
+    "image": "https://via.placeholder.com/150.png",
+    "photo": null,
+    "id": "test-ring-two-51671",
+    "inStock": true
   }
 ]
