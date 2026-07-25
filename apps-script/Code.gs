@@ -188,7 +188,16 @@ function doPost(e) {
     FIELDS.forEach(function (k) { if (parsed[k]) draft.fields[k] = parsed[k]; });
     const idx = nextBlankIndex(draft);
     const curField = (idx < FIELDS.length) ? FIELDS[idx] : null;
-    if (curField && !parsed[curField] && text.trim()) draft.fields[curField] = text.trim();
+    // If the reply is a labelled "Field: value" line, store it under that field;
+    // otherwise treat the raw text as the answer to the current question.
+    const lbl = text.match(/^\s*(name|category|price|mrp|description|desc)\s*[:=]\s*(.+?)\s*$/i);
+    if (lbl) {
+      let k = lbl[1].toLowerCase();
+      if (k === "desc") k = "description";
+      draft.fields[k] = lbl[2].trim();
+    } else if (curField && text.trim()) {
+      draft.fields[curField] = text.trim();
+    }
     setDraft(chatId, draft);
     return continueDraft(chatId);
   }
@@ -291,9 +300,12 @@ function parseCaption(caption) {
   });
   const price = fields.price ? parseFloat(String(fields.price).replace(/[^\d.]/g, "")) || 0 : 0;
   const mrp = fields.mrp ? parseFloat(String(fields.mrp).replace(/[^\d.]/g, "")) || 0 : 0;
+  // NOTE: return "" (not a default like "Uncategorized") for missing fields.
+  // The caller only stores a field when it is truthy, so an empty string keeps
+  // the field genuinely blank instead of locking in a bogus default.
   return {
     name: (fields.name || "").trim(),
-    category: (fields.category || "Uncategorized").trim(),
+    category: (fields.category || "").trim(),
     price: price,
     mrp: mrp,
     description: (fields.description || "").trim(),
