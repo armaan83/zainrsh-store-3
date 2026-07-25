@@ -559,10 +559,14 @@ function clearDraft(chatId) {
 }
 
 // Index of the first field still blank (or FIELDS.length if all filled).
+// NOTE: a field that was explicitly answered (even with an empty string, e.g.
+// via /skip for optional MRP/Description) is treated as FILLED. We therefore
+// test for "never set" (undefined/null), NOT falsiness — otherwise an empty
+// optional field would loop forever and the bot would never reach publish.
 function nextBlankIndex(draft) {
   const f = draft.fields || {};
   for (let i = 0; i < FIELDS.length; i++) {
-    if (!f[FIELDS[i]]) return i;
+    if (f[FIELDS[i]] === undefined || f[FIELDS[i]] === null) return i;
   }
   return FIELDS.length;
 }
