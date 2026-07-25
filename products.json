@@ -8,5 +8,16 @@
     "image": "images/mera-necklace-1785002421.jpg",
     "id": "mera-necklace-02422",
     "inStock": true
+  },
+  {
+    "name": "Test Ring One",
+    "category": "Earrings",
+    "price": 499,
+    "mrp": 699,
+    "description": "antique gold",
+    "image": "https://via.placeholder.com/150.png",
+    "photo": null,
+    "id": "test-ring-one-08453",
+    "inStock": true
   }
 ]
