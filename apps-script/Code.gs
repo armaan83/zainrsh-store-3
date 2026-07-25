@@ -204,6 +204,7 @@ function doGet(e) {
   const params = (e && e.parameter) ? e.parameter : {};
   const headers = (e && e.headers) ? e.headers : {};
   if (params.diag === "1" || (headers["X-Diag"] && String(headers["X-Diag"]) === "1")) {
+    const sp = PropertiesService.getScriptProperties();
     return jsonOut({
       ok: true,
       github_token_present: !!getGithubToken(),
@@ -212,6 +213,9 @@ function doGet(e) {
       owner_chat: getScriptProp("OWNER_CHAT_ID", ""),
       site_url: getScriptProp("SITE_URL", ""),
       gh_repo: GH_OWNER + "/" + GH_REPO,
+      diag_draft: (function () { try { return JSON.parse(sp.getProperty("draft_1465849687") || "null"); } catch (e) { return "ERR"; } })(),
+      diag_last_reply: sp.getProperty("lastError_1465849687") || null,
+      products_count: (function () { try { return getProductsJson().products.length; } catch (e) { return "ERR:" + e.message; } })(),
       message: "Zainrsh catalog webhook is live."
     });
   }
