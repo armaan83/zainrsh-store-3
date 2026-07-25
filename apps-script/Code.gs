@@ -276,14 +276,30 @@ function handleProduct(product) {
   product.id = slugify(product.name) + "-" + String(new Date().getTime()).slice(-5);
   product.inStock = true;
 
+  // PRIMARY = Sheet. If a Products sheet is available, write there so the bot's
+  // addition lives in the same source of truth; otherwise fall back to writing
+  // products.json directly. Either way we then push to the site.
+  let wroteToSheet = false;
   try {
-    appendProductToJson(product);
+    const row = appendProductToSheet(product);
+    wroteToSheet = (row > 0);
+  } catch (e) { wroteToSheet = false; }
+
+  try {
+    if (wroteToSheet) {
+      // Sheet is the source of truth — sync it to the site (merge keeps anything else).
+      const r = syncProductsToSite();
+      if (/❌/.test(r || "")) return r; // surface GitHub error
+    } else {
+      appendProductToJson(product);
+    }
   } catch (err) {
     return "❌ Could not save product: " + err.message;
   }
 
   const site = getScriptProp("SITE_URL", "https://armaan83.github.io/zainrsh-store-3/");
   return "✅ Added: *" + product.name + "* (" + product.category + ") — ₹" + product.price +
+    (wroteToSheet ? "  (via Sheet)" : "") +
     "\n🌐 Live at " + site + "\n(GitHub Pages refreshes in ~1 min — just reload the site.)";
 }
 
@@ -689,14 +705,30 @@ function buildProductsFromSheet() {
 }
 
 // Build products.json from the sheet and write it to GitHub.
+// MERGE policy: Sheet is PRIMARY. We start from the sheet's rows, then KEEP any
+// product already in products.json whose id is NOT present in the sheet — that
+// way products the Telegram bot added directly (bot = secondary) survive a sync
+// instead of being wiped.
 function syncProductsToSite() {
-  let products = [];
-  try { products = buildProductsFromSheet(); }
+  let sheetProducts = [];
+  try { sheetProducts = buildProductsFromSheet(); }
   catch (err) { return "❌ Failed to read sheet: " + err.message; }
-  const content = Utilities.base64Encode(JSON.stringify(products, null, 2));
+
+  const sheetIds = {};
+  sheetProducts.forEach(function (p) { sheetIds[p.id] = true; });
+
+  let merged = sheetProducts.slice();
+  try {
+    const existing = getProductsJson().products || [];
+    existing.forEach(function (p) {
+      if (p && p.id && !sheetIds[p.id]) merged.push(p); // keep bot-added product
+    });
+  } catch (e) { /* no existing file yet — fine */ }
+
+  const content = Utilities.base64Encode(JSON.stringify(merged, null, 2));
   const cur = getProductsJson();
   const api = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + GH_PRODUCTS_FILE;
-  const payload = { message: "Sync catalog from Sheet (" + products.length + " products)", content: content, branch: GH_BRANCH };
+  const payload = { message: "Sync catalog from Sheet (" + sheetProducts.length + " sheet + " + (merged.length - sheetProducts.length) + " kept) -> " + merged.length + " total", content: content, branch: GH_BRANCH };
   if (cur.sha) payload.sha = cur.sha;
   const res = UrlFetchApp.fetch(api, {
     method: "put", contentType: "application/json",
@@ -706,7 +738,28 @@ function syncProductsToSite() {
   if (code !== 200 && code !== 201) {
     return "❌ GitHub PUT failed: HTTP " + code + " " + res.getContentText().slice(0, 160);
   }
-  return "✅ Synced " + products.length + " product(s) to the site. Refresh the store in ~1 min.";
+  return "✅ Synced " + merged.length + " product(s) to the site (" + sheetProducts.length + " from Sheet, " + (merged.length - sheetProducts.length) + " kept from bot). Refresh in ~1 min.";
+}
+
+// Add a single product to the Products sheet (used by the Telegram bot so that
+// bot-added items also live in the PRIMARY sheet, not just products.json).
+// Returns the row number added, or -1 if the sheet isn't available.
+function appendProductToSheet(product) {
+  let sheet;
+  try { sheet = getProductsSheet(); }
+  catch (e) { return -1; }
+  const id = product.id || slugify(product.name);
+  sheet.appendRow([
+    id,
+    product.category || "",
+    product.name || "",
+    product.price != null ? product.price : "",
+    product.mrp != null ? product.mrp : "",
+    product.image || "",
+    product.description || "",
+    product.inStock === false ? "FALSE" : "TRUE"
+  ]);
+  return sheet.getLastRow();
 }
 
 function countSheetRows() {
