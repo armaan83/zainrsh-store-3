@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "name": "Mera Necklace",
+    "category": "Necklace",
+    "price": 449.0,
+    "mrp": 699.0,
+    "description": "antique golden Necklace.",
+    "image": "images/mera-necklace-1785002421.jpg",
+    "id": "mera-necklace-02422",
+    "inStock": true
+  }
+]
