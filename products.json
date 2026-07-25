@@ -2,11 +2,21 @@
   {
     "name": "Mera Necklace",
     "category": "Necklace",
-    "price": 449.0,
-    "mrp": 699.0,
+    "price": 449,
+    "mrp": 699,
     "description": "antique golden Necklace.",
     "image": "images/mera-necklace-1785002421.jpg",
     "id": "mera-necklace-02422",
+    "inStock": true
+  },
+  {
+    "name": "Direct Webhook Test",
+    "category": "Earrings",
+    "price": 350,
+    "mrp": 599,
+    "description": "",
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "id": "direct-webhook-test-00463",
     "inStock": true
   }
 ]
