@@ -30,11 +30,13 @@ const SHEET_NAME = "Orders";
 const PRODUCTS_SHEET_NAME = "Products";
 
 // --- GitHub config (where product photos + products.json live) ---
-const GH_OWNER = "armaan83";
-const GH_REPO = "zainrsh-store-3";
-const GH_BRANCH = "main";
-const GH_IMAGES_PATH = "images";
-const GH_PRODUCTS_FILE = "products.json";
+// Override any of these via Script Properties (e.g. GH_REPO = zainrsh-store-4)
+// so you can point at a new repo WITHOUT re-editing code.
+const GH_OWNER = getScriptProp("GH_OWNER", "armaan83");
+const GH_REPO = getScriptProp("GH_REPO", "zainrsh-store-3");
+const GH_BRANCH = getScriptProp("GH_BRANCH", "main");
+const GH_IMAGES_PATH = getScriptProp("GH_IMAGES_PATH", "images");
+const GH_PRODUCTS_FILE = getScriptProp("GH_PRODUCTS_FILE", "products.json");
 
 function getScriptProp(k, fallback) {
   const v = PropertiesService.getScriptProperties().getProperty(k);
@@ -81,6 +83,19 @@ function doPost(e) {
       tgSend(chatId, listProducts(), "Markdown");
     } else if (cmd === "/delete") {
       tgSend(chatId, deleteProduct(arg), "Markdown");
+    } else if (cmd === "/status") {
+      const props = PropertiesService.getScriptProperties().getProperties();
+      const keys = Object.keys(props);
+      const has = (k) => keys.indexOf(k) > -1 && props[k] && props[k].indexOf("PASTE") === -1;
+      tgSend(chatId,
+        "🔧 Config:\n" +
+        (has("GITHUB_TOKEN") ? "✅ GITHUB_TOKEN present" : "❌ GITHUB_TOKEN missing") + "\n" +
+        "   ↳ " + githubCheck() + "\n" +
+        (has("TELEGRAM_BOT_TOKEN") ? "✅ TELEGRAM_BOT_TOKEN present" : "❌ TELEGRAM_BOT_TOKEN missing") + "\n" +
+        "OWNER_CHAT_ID = " + (props.OWNER_CHAT_ID || "(empty)") + "\n" +
+        "SITE_URL = " + (props.SITE_URL || "(empty)") + "\n" +
+        "GH_REPO = " + GH_OWNER + "/" + GH_REPO,
+        "Markdown");
     } else {
       tgSend(chatId, "Unknown command. Send /help.");
     }
@@ -102,6 +117,21 @@ function doPost(e) {
 }
 
 function doGet() {
+  // Self-diagnostic endpoint usable by ?diag=1 — lets the operator read the
+  // live token verdict WITHOUT needing to relay Telegram messages.
+  const params = (typeof e !== "undefined" && e && e.parameter) ? e.parameter : {};
+  if (params.diag === "1") {
+    return jsonOut({
+      ok: true,
+      github_token_present: !!getGithubToken(),
+      github_check: githubCheck(),
+      bot_token_present: !!getBotToken(),
+      owner_chat: getScriptProp("OWNER_CHAT_ID", ""),
+      site_url: getScriptProp("SITE_URL", ""),
+      gh_repo: GH_OWNER + "/" + GH_REPO,
+      message: "Zainrsh catalog webhook is live."
+    });
+  }
   return jsonOut({ ok: true, message: "Zainrsh catalog webhook is live." });
 }
 
@@ -238,6 +268,24 @@ function deleteProduct(id) {
 // ---------------------------------------------------------------------------
 function githubAuth() {
   return { Authorization: "token " + getGithubToken(), Accept: "application/vnd.github+json" };
+}
+
+// Live check: is the PAT valid, and does it have WRITE access to the repo?
+function githubCheck() {
+  const token = getGithubToken();
+  if (!token) return "❌ GITHUB_TOKEN empty";
+  // 1) Who owns the token? (proves it's a real, valid PAT)
+  const me = UrlFetchApp.fetch("https://api.github.com/user", { headers: githubAuth(), muteHttpExceptions: true });
+  if (me.getResponseCode() !== 200) {
+    const m = JSON.parse(me.getContentText()).message || ("HTTP " + me.getResponseCode());
+    return "❌ Token REJECTED by GitHub: " + m + "  (bad/expired token, or pasted with a space)";
+  }
+  const user = JSON.parse(me.getContentText()).login;
+  // 2) Does it have write perms on our repo?
+  const repo = UrlFetchApp.fetch("https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO, { headers: githubAuth(), muteHttpExceptions: true });
+  const p = repo.getResponseCode() === 200 ? JSON.parse(repo.getContentText()).permissions : {};
+  const perms = (p.push ? "✅ push" : (p.pull ? "⚠️ read-only" : "❌ none"));
+  return "✅ Token valid → user @" + user + " | repo perms: " + perms + " (" + GH_OWNER + "/" + GH_REPO + ")";
 }
 
 function githubUploadImage(base64Data, filename) {
