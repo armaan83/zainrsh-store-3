@@ -70,13 +70,19 @@ function doPost(e) {
 
   // Dedupe: Telegram retries webhook delivery on slow responses (Apps Script
   // cold starts), which causes the same update to be processed 2-3x. Ignore
-  // repeats within 60s so the bot doesn't echo /list or double-add products.
+  // repeats. We keep a bounded ring of recent update_ids in ScriptProperties
+  // (NOT CacheService — CacheService is unreliable in web-app context and the
+  //  dedupe silently failed there, causing the /list triple-send).
   const updateId = update.update_id;
   if (updateId) {
-    const cache = CacheService.getScriptCache();
-    const dkey = "seen_" + updateId;
-    if (cache.get(dkey)) return jsonOut({ ok: true, note: "duplicate" });
-    cache.put(dkey, "1", 60);
+    const sp = PropertiesService.getScriptProperties();
+    const DKEY = "recent_update_ids";
+    let ids = [];
+    try { ids = JSON.parse(sp.getProperty(DKEY) || "[]"); } catch (e) { ids = []; }
+    if (ids.indexOf(updateId) > -1) return jsonOut({ ok: true, note: "duplicate" });
+    ids.push(updateId);
+    if (ids.length > 200) ids = ids.slice(-200);
+    sp.setProperty(DKEY, JSON.stringify(ids));
   }
 
   const message = update.message || (update.edited_message);
@@ -93,8 +99,14 @@ function doPost(e) {
   const caption = message.caption || "";
   const photo = message.photo;
 
-  // Slash commands
-  if (text.indexOf("/") === 0) {
+  // Slash commands — but ONLY when the message is actually a command.
+  // A photo/caption message has empty `text`, so it must NOT enter this branch
+  // (that was the bug that made attached photos do nothing). Also, while a
+  // product draft is open, plain text (and /skip) is an ANSWER, not a command.
+  const draftActive = !!getDraft(chatId);
+  const isCommandText = text && text.charAt(0) === "/" && !/^https?:\/\//i.test(text);
+
+  if (isCommandText) {
     const cmd = text.split(" ")[0].toLowerCase();
     const arg = text.slice(cmd.length).trim();
     if (cmd === "/start" || cmd === "/help") {
@@ -125,10 +137,13 @@ function doPost(e) {
         "SITE_URL = " + (props.SITE_URL || "(empty)") + "\n" +
         "GH_REPO = " + GH_OWNER + "/" + GH_REPO,
         "Markdown");
+    } else if (draftActive && cmd === "/skip") {
+      // fall through to the draft flow below (so /skip works mid-conversation)
     } else {
       tgSend(chatId, "Unknown command. Send /help.");
+      return jsonOut({ ok: true });
     }
-    return jsonOut({ ok: true });
+    if (!(draftActive && cmd === "/skip")) return jsonOut({ ok: true });
   }
 
   // ---- Conversational product-add flow ----
@@ -498,13 +513,13 @@ function seedProductsToJson() {
 
 // ---------------------------------------------------------------------------
 // Conversational draft helpers.
-// IMPORTANT: draft state is stored in UserProperties (strongly consistent),
-// NOT CacheService — CacheService has eventual consistency and the next
-// message's read can miss the just-written draft, breaking the flow.
-// (Web app runs "as Me", so UserProperties is the owner's store; we key by
-//  chatId to keep per-chat drafts separate.)
+// Use ScriptProperties (keyed by chatId): it reliably PERSISTS between web-app
+// requests and is shared with the owner (the only user). getUserProperties()
+// is unreliable in a "Execute as Me" web app, and CacheService has eventual
+// consistency — both silently broke the draft flow. ScriptProperties is the
+// dependable choice here.
 // ---------------------------------------------------------------------------
-function draftStore() { return PropertiesService.getUserProperties(); }
+function draftStore() { return PropertiesService.getScriptProperties(); }
 function draftKey(chatId) { return "draft_" + chatId; }
 
 function getDraft(chatId) {
