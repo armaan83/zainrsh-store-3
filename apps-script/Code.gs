@@ -240,6 +240,11 @@ function doGet(e) {
       return jsonOut({ ok: false, testwrite: "THREW", error: String(e && e.message ? e.message : e) });
     }
   }
+  // Sync the Products sheet -> products.json on GitHub (webhook-free catalog path).
+  if (params.sync === "1") {
+    const result = syncProductsToSite();
+    return jsonOut({ ok: !/❌/.test(result || ""), result: result });
+  }
   return jsonOut({ ok: true, message: "Zainrsh catalog webhook is live." });
 }
 
@@ -483,13 +488,23 @@ function sendOwnerAlert(orderId, customer, items, total, paymentMode) {
   }
 }
 
+// When this script is BOUND to a spreadsheet, use the active one (so you never
+// have to paste SHEET_ID). Falls back to SHEET_ID for standalone use.
+function activeOrConfiguredSs() {
+  try {
+    const active = SpreadsheetApp.getActiveSpreadsheet();
+    if (active && SHEET_ID === "PASTE_YOUR_GOOGLE_SHEET_ID_HERE") return active;
+  } catch (e) { /* not bound */ }
+  return SpreadsheetApp.openById(SHEET_ID);
+}
+
 function getSheet() {
-  return SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME) ||
-    SpreadsheetApp.openById(SHEET_ID).insertSheet(SHEET_NAME);
+  const ss = activeOrConfiguredSs();
+  return ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
 }
 
 function getProductsSheet() {
-  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const ss = activeOrConfiguredSs();
   let s = ss.getSheetByName(PRODUCTS_SHEET_NAME);
   if (!s) {
     s = ss.insertSheet(PRODUCTS_SHEET_NAME);
@@ -607,4 +622,92 @@ function continueDraft(chatId) {
   clearDraft(chatId);
   tgSend(chatId, reply, "Markdown");
   return jsonOut({ ok: true });
+}
+
+// ===========================================================================
+// SHEET -> SITE SYNC  (webhook-free catalog management)
+// ---------------------------------------------------------------------------
+// The Telegram-webhook bot is unreliable because Apps Script /exec 302-redirects
+// every POST and Telegram refuses to follow redirects. So the dependable path is:
+//   you edit a Google Sheet  ->  this script  ->  products.json on GitHub  ->  site.
+// Paste an image URL directly into the "image" column; the site already resolves
+// absolute https URLs. Run "Sync -> Site" from the menu, or it auto-syncs on edit.
+// ===========================================================================
+
+// Menu shown when the Sheet is opened.
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu("Zainrsh Catalog")
+    .addItem("Sync -> Site", "syncProductsToSite")
+    .addItem("Count rows in sheet", "countSheetRows")
+    .addToUi();
+}
+
+// Debounced auto-sync when you edit the Products sheet.
+function onEdit(e) {
+  try {
+    const sheet = e && e.range ? e.range.getSheet() : null;
+    if (!sheet || sheet.getName() !== PRODUCTS_SHEET_NAME) return;
+    const props = PropertiesService.getScriptProperties();
+    const last = Number(props.getProperty("autoSyncAt") || 0);
+    const now = Date.now();
+    props.setProperty("autoSyncAt", now);
+    if (now - last < 15000) return; // skip if synced <15s ago
+    syncProductsToSite();
+  } catch (err) { console.error("onEdit sync failed: " + err.message); }
+}
+
+// Read the Products sheet and build the products.json array.
+function buildProductsFromSheet() {
+  const sheet = getProductsSheet();
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) return []; // only header, no products
+  const header = data[0].map(function (h) { return String(h).trim().toLowerCase(); });
+  const idx = {};
+  header.forEach(function (h, i) { idx[h] = i; });
+  const products = [];
+  for (let r = 1; r < data.length; r++) {
+    const row = data[r];
+    const name = row[idx.name] != null ? String(row[idx.name]).trim() : "";
+    if (!name) continue; // skip blank rows
+    const category = (row[idx.category] != null ? String(row[idx.category]) : "").trim();
+    const priceRaw = row[idx.price] != null ? String(row[idx.price]) : "0";
+    const mrpRaw = row[idx.mrp] != null ? String(row[idx.mrp]) : "0";
+    const price = parseFloat(priceRaw.replace(/[^0-9.]/g, "")) || 0;
+    const mrp = parseFloat(mrpRaw.replace(/[^0-9.]/g, "")) || 0;
+    const image = (row[idx.image] != null ? String(row[idx.image]) : "").trim();
+    const description = (row[idx.description] != null ? String(row[idx.description]) : "").trim();
+    const inStockRaw = row[idx.instock] != null ? String(row[idx.instock]).trim().toLowerCase() : "";
+    const inStock = inStockRaw === "" ? true : (inStockRaw === "true" || inStockRaw === "yes" || inStockRaw === "1");
+    let id = (row[idx.id] != null ? String(row[idx.id]).trim() : "");
+    if (!id) id = slugify(name) + "-" + new Date().getTime().toString().slice(-5);
+    products.push({ id: id, category: category, name: name, price: price, mrp: mrp, image: image, description: description, inStock: inStock });
+  }
+  return products;
+}
+
+// Build products.json from the sheet and write it to GitHub.
+function syncProductsToSite() {
+  let products = [];
+  try { products = buildProductsFromSheet(); }
+  catch (err) { return "❌ Failed to read sheet: " + err.message; }
+  const content = Utilities.base64Encode(JSON.stringify(products, null, 2));
+  const cur = getProductsJson();
+  const api = "https://api.github.com/repos/" + GH_OWNER + "/" + GH_REPO + "/contents/" + GH_PRODUCTS_FILE;
+  const payload = { message: "Sync catalog from Sheet (" + products.length + " products)", content: content, branch: GH_BRANCH };
+  if (cur.sha) payload.sha = cur.sha;
+  const res = UrlFetchApp.fetch(api, {
+    method: "put", contentType: "application/json",
+    headers: githubAuth(), payload: JSON.stringify(payload), muteHttpExceptions: true
+  });
+  const code = res.getResponseCode();
+  if (code !== 200 && code !== 201) {
+    return "❌ GitHub PUT failed: HTTP " + code + " " + res.getContentText().slice(0, 160);
+  }
+  return "✅ Synced " + products.length + " product(s) to the site. Refresh the store in ~1 min.";
+}
+
+function countSheetRows() {
+  const sheet = getProductsSheet();
+  const n = Math.max(0, sheet.getLastRow() - 1);
+  SpreadsheetApp.getUi().alert(n + " product row(s) in the sheet (excluding header).");
 }
