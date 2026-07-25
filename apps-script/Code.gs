@@ -679,7 +679,10 @@ function buildProductsFromSheet() {
     const inStockRaw = row[idx.instock] != null ? String(row[idx.instock]).trim().toLowerCase() : "";
     const inStock = inStockRaw === "" ? true : (inStockRaw === "true" || inStockRaw === "yes" || inStockRaw === "1");
     let id = (row[idx.id] != null ? String(row[idx.id]).trim() : "");
-    if (!id) id = slugify(name) + "-" + new Date().getTime().toString().slice(-5);
+    // id is OPTIONAL — leave the column blank and we derive a stable slug from
+    // the name (e.g. "Mera Necklace" -> "mera-necklace"). Type one only if you
+    // want a fixed id (e.g. to keep cart links stable across edits).
+    if (!id) id = slugify(name);
     products.push({ id: id, category: category, name: name, price: price, mrp: mrp, image: image, description: description, inStock: inStock });
   }
   return products;
