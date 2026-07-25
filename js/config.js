@@ -13,7 +13,7 @@ const CONFIG = {
 
   // The Web App URL you get after deploying apps-script/Code.gs as a Google Apps Script Web App.
   // Looks like: https://script.google.com/macros/s/AKfycb.../exec
-  APPS_SCRIPT_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbw8xh1jYA2ZEfkkAgr0rC8U7v5plZWkZ0qoaYrHxKln1cLCaCx337qInbMxy70xCPuMXg/exec",
 
   STORE_NAME: "Zainrsh Accessories",
 };
