@@ -38,6 +38,17 @@ const GH_BRANCH = getScriptProp("GH_BRANCH", "main");
 const GH_IMAGES_PATH = getScriptProp("GH_IMAGES_PATH", "images");
 const GH_PRODUCTS_FILE = getScriptProp("GH_PRODUCTS_FILE", "products.json");
 
+// Conversational product-add flow: ask each field one at a time.
+// Required = Name, Category, Price. MRP & Description are optional (reply /skip).
+const FIELDS = ["name", "category", "price", "mrp", "description"];
+const QUESTION = {
+  name: "📝 *Step 1/5 — Product Name*\nWhat is the product called? (e.g. Meera Jhumka)",
+  category: "📝 *Step 2/5 — Category*\nEarrings / Necklace / Bracelet / Ring / Other?",
+  price: "📝 *Step 3/5 — Price (₹)*\nSelling price? (e.g. 450)",
+  mrp: "📝 *Step 4/5 — MRP (optional)*\nOriginal/MRP price? Type /skip to leave blank.",
+  description: "📝 *Step 5/5 — Description (optional)*\nShort description? Type /skip to leave blank."
+};
+
 function getScriptProp(k, fallback) {
   const v = PropertiesService.getScriptProperties().getProperty(k);
   return (v && v.indexOf("PASTE") === -1) ? v : (fallback || "");
@@ -55,6 +66,17 @@ function doPost(e) {
     update = JSON.parse(e.postData.contents);
   } catch (err) {
     return jsonOut({ ok: false, error: "bad json" });
+  }
+
+  // Dedupe: Telegram retries webhook delivery on slow responses (Apps Script
+  // cold starts), which causes the same update to be processed 2-3x. Ignore
+  // repeats within 60s so the bot doesn't echo /list or double-add products.
+  const updateId = update.update_id;
+  if (updateId) {
+    const cache = CacheService.getScriptCache();
+    const dkey = "seen_" + updateId;
+    if (cache.get(dkey)) return jsonOut({ ok: true, note: "duplicate" });
+    cache.put(dkey, "1", 60);
   }
 
   const message = update.message || (update.edited_message);
@@ -76,13 +98,16 @@ function doPost(e) {
     const cmd = text.split(" ")[0].toLowerCase();
     const arg = text.slice(cmd.length).trim();
     if (cmd === "/start" || cmd === "/help") {
-      tgSend(chatId, "Send a photo + caption to add a product:\nName: Meera Jhumka\nCategory: Earrings\nPrice: 449\nMRP: 699\nDescription: antique gold jhumka\n\nCommands: /list  /delete <id>");
+      tgSend(chatId, "To add a product, just send a *photo* — I'll ask for Name, Category, Price, MRP and Description one by one.\n\nOr send photo + caption with all fields at once:\nName: Meera Jhumka\nCategory: Earrings\nPrice: 449\nMRP: 699\nDescription: antique gold jhumka\n\nCommands:\n/list  /delete <id>  /status  /cancel  /help\n(reply /skip for optional MRP & Description)");
     } else if (cmd === "/add") {
       tgSend(chatId, "Just send a photo (or image URL) + caption:\nName: …\nCategory: …\nPrice: …\nMRP: … (optional)\nDescription: … (optional)");
     } else if (cmd === "/list") {
       tgSend(chatId, listProducts(), "Markdown");
     } else if (cmd === "/delete") {
       tgSend(chatId, deleteProduct(arg), "Markdown");
+    } else if (cmd === "/cancel") {
+      clearDraft(chatId);
+      tgSend(chatId, "🚫 Any in-progress product draft cleared. Send a new photo to start.");
     } else if (cmd === "/status") {
       const props = PropertiesService.getScriptProperties().getProperties();
       const keys = Object.keys(props);
@@ -102,25 +127,64 @@ function doPost(e) {
     return jsonOut({ ok: true });
   }
 
-  // Product add: either a photo, or a caption with an image URL
-  const looksLikeProduct = photo || /https?:\/\/\S+\.(png|jpe?g|gif|webp)/i.test(caption);
-  if (looksLikeProduct) {
-    const reply = handleProduct(chatId, caption, photo);
-    tgSend(chatId, reply, "Markdown");
-    return jsonOut({ ok: true });
+  // ---- Conversational product-add flow ----
+  // A photo (or a message containing an image URL) starts/continues a draft.
+  // Each missing field is asked one at a time. Plain text while a draft is open
+  // is treated as the answer to the current question. MRP & Description are
+  // optional (reply /skip). Required fields: Name, Category, Price.
+  const capText = caption || text || "";
+  const messageHasImage = !!photo || /https?:\/\/\S+\.(png|jpe?g|gif|webp)/i.test(capText);
+
+  if (messageHasImage) {
+    let draft = getDraft(chatId) || { photo: null, imageUrl: null, fields: {} };
+    if (photo) draft.photo = photo;
+    const parsed = parseCaption(capText);
+    FIELDS.forEach(function (k) { if (parsed[k]) draft.fields[k] = parsed[k]; });
+    const url = (capText.match(/https?:\/\/\S+\.(png|jpe?g|gif|webp)/i) || [])[0];
+    if (url) draft.imageUrl = url;
+    setDraft(chatId, draft);
+    return continueDraft(chatId);
   }
 
-  if (caption) {
-    tgSend(chatId, "❌ Attach a photo or include an image URL (ending in .jpg/.png) in the caption.");
+  if (getDraft(chatId)) {
+    // Plain-text answer to the current question.
+    if (text === "/skip") {
+      const draft = getDraft(chatId);
+      const f = nextBlankIndex(draft);
+      if (f < FIELDS.length && (FIELDS[f] === "mrp" || FIELDS[f] === "description")) {
+        draft.fields[FIELDS[f]] = "";
+        setDraft(chatId, draft);
+        return continueDraft(chatId);
+      }
+      tgSend(chatId, "❌ Can't skip a required field. Please type it.");
+      return jsonOut({ ok: true });
+    }
+    if (text === "/cancel") {
+      clearDraft(chatId);
+      tgSend(chatId, "🚫 Cancelled. Send a new photo to start again.");
+      return jsonOut({ ok: true });
+    }
+    const draft = getDraft(chatId);
+    const parsed = parseCaption(text);
+    FIELDS.forEach(function (k) { if (parsed[k]) draft.fields[k] = parsed[k]; });
+    const idx = nextBlankIndex(draft);
+    const curField = (idx < FIELDS.length) ? FIELDS[idx] : null;
+    if (curField && !parsed[curField] && text.trim()) draft.fields[curField] = text.trim();
+    setDraft(chatId, draft);
+    return continueDraft(chatId);
   }
+
+  if (text) tgSend(chatId, "❌ Send a *photo* to add a product, or type /help.");
   return jsonOut({ ok: true });
 }
 
-function doGet() {
-  // Self-diagnostic endpoint usable by ?diag=1 — lets the operator read the
-  // live token verdict WITHOUT needing to relay Telegram messages.
-  const params = (typeof e !== "undefined" && e && e.parameter) ? e.parameter : {};
-  if (params.diag === "1") {
+function doGet(e) {
+  // Self-diagnostic: trigger via header `X-Diag: 1` (query params get stripped
+  // by the /exec -> /echo redirect, but headers survive). Lets the operator read
+  // the live token verdict WITHOUT relaying Telegram messages.
+  const params = (e && e.parameter) ? e.parameter : {};
+  const headers = (e && e.headers) ? e.headers : {};
+  if (params.diag === "1" || (headers["X-Diag"] && String(headers["X-Diag"]) === "1")) {
     return jsonOut({
       ok: true,
       github_token_present: !!getGithubToken(),
@@ -138,26 +202,19 @@ function doGet() {
 // ---------------------------------------------------------------------------
 // Product handling
 // ---------------------------------------------------------------------------
-function handleProduct(chatId, caption, photo) {
-  const product = parseCaption(caption);
-  if (!product.name) {
-    return "❌ Send a photo (or image URL) + caption with at least:\nName: <product name>\nPrice: <number>\nCategory: <optional>";
-  }
-
+function handleProduct(product) {
   let imagePath = product.image; // may be an external URL
   const token = getGithubToken();
   if (!token) return "❌ GitHub token not set (Script Property GITHUB_TOKEN).";
 
-  if (!imagePath && photo) {
+  if (!imagePath && product.photo) {
     try {
-      const fileId = photo[photo.length - 1].file_id;
+      const fileId = product.photo[product.photo.length - 1].file_id;
       const bytes = downloadTelegramFile(fileId);
       const b64 = Utilities.base64Encode(bytes);
-      const ext = (photo[photo.length - 1].file_unique_id || "img").slice(-6);
       const fname = slugify(product.name) + "-" + new Date().getTime() + ".jpg";
       const res = githubUploadImage(b64, fname);
       if (!res.success) return "❌ Image upload failed: " + res.error;
-      // Store a repo-relative path so the site resolves it from its own root.
       imagePath = GH_IMAGES_PATH + "/" + fname;
     } catch (err) {
       return "❌ Image upload failed: " + err.message;
@@ -433,4 +490,63 @@ function seedProductsToJson() {
   if (cur.sha) payload.sha = cur.sha;
   UrlFetchApp.fetch(api, { method: "put", contentType: "application/json", headers: githubAuth(), payload: JSON.stringify(payload), muteHttpExceptions: true });
   return "Seeded " + products.length + " products.";
+}
+
+// ---------------------------------------------------------------------------
+// Conversational draft helpers.
+// IMPORTANT: draft state is stored in UserProperties (strongly consistent),
+// NOT CacheService — CacheService has eventual consistency and the next
+// message's read can miss the just-written draft, breaking the flow.
+// (Web app runs "as Me", so UserProperties is the owner's store; we key by
+//  chatId to keep per-chat drafts separate.)
+// ---------------------------------------------------------------------------
+function draftStore() { return PropertiesService.getUserProperties(); }
+function draftKey(chatId) { return "draft_" + chatId; }
+
+function getDraft(chatId) {
+  const raw = draftStore().getProperty(draftKey(chatId));
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch (e) { return null; }
+}
+
+function setDraft(chatId, draft) {
+  draftStore().setProperty(draftKey(chatId), JSON.stringify(draft));
+}
+
+function clearDraft(chatId) {
+  draftStore().deleteProperty(draftKey(chatId));
+}
+
+// Index of the first field still blank (or FIELDS.length if all filled).
+function nextBlankIndex(draft) {
+  const f = draft.fields || {};
+  for (let i = 0; i < FIELDS.length; i++) {
+    if (!f[FIELDS[i]]) return i;
+  }
+  return FIELDS.length;
+}
+
+// Drives the conversation: ask the next missing field, or publish when done.
+function continueDraft(chatId) {
+  const draft = getDraft(chatId);
+  if (!draft) { tgSend(chatId, "❌ No draft found. Send a photo to start."); return jsonOut({ ok: true }); }
+  const idx = nextBlankIndex(draft);
+  if (idx < FIELDS.length) {
+    tgSend(chatId, QUESTION[FIELDS[idx]], "Markdown");
+    return jsonOut({ ok: true });
+  }
+  // All fields collected. Publish.
+  const product = {
+    name: draft.fields.name,
+    category: draft.fields.category || "Uncategorized",
+    price: parseFloat(String(draft.fields.price).replace(/[^\d.]/g, "")) || 0,
+    mrp: parseFloat(String(draft.fields.mrp).replace(/[^\d.]/g, "")) || 0,
+    description: draft.fields.description || "",
+    image: draft.imageUrl || "",
+    photo: draft.photo || null
+  };
+  const reply = handleProduct(product);
+  clearDraft(chatId);
+  tgSend(chatId, reply, "Markdown");
+  return jsonOut({ ok: true });
 }
