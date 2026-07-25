@@ -1,2 +1,4 @@
 .DS_Store
 .DS_Store
+# Local secrets — never commit
+bot_config.json

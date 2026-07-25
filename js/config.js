@@ -11,9 +11,14 @@ const CONFIG = {
   // The name that should show up when customers scan the QR / open their UPI app to pay.
   UPI_PAYEE_NAME: "Zainrsh Accessories",
 
-  // The Web App URL you get after deploying apps-script/Code.gs as a Google Apps Script Web App.
+  // Orders/checkout go through the Apps Script Web App (still used for the Sheet + orders).
   // Looks like: https://script.google.com/macros/s/AKfycb.../exec
   APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwG1zVAfbmw5uPxqoLx1J-RwOEo-49FKw6y5iaBl_bxrYUOXVe4D_0LYoGAmU57Iy2OYQ/exec",
+
+  // The catalog is now published directly to the repo as products.json by the Telegram bot.
+  // It lives in the repo root and is served by GitHub Pages for free.
+  PRODUCTS_JSON_URL: "products.json",
+
 
   STORE_NAME: "Zainrsh Accessories",
 };
