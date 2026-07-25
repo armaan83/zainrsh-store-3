@@ -108,6 +108,10 @@ function doPost(e) {
     } else if (cmd === "/cancel") {
       clearDraft(chatId);
       tgSend(chatId, "🚫 Any in-progress product draft cleared. Send a new photo to start.");
+    } else if (cmd === "/debugdraft") {
+      const d = getDraft(chatId);
+      const last = draftStore().getProperty("lastError_" + chatId);
+      tgSend(chatId, "🐞 draft: " + (d ? JSON.stringify(d) : "(none)") + (last ? "\nlastErr: " + last : ""), "Markdown");
     } else if (cmd === "/status") {
       const props = PropertiesService.getScriptProperties().getProperties();
       const keys = Object.keys(props);
@@ -546,6 +550,7 @@ function continueDraft(chatId) {
     photo: draft.photo || null
   };
   const reply = handleProduct(product);
+  draftStore().setProperty("lastError_" + chatId, String(reply));
   clearDraft(chatId);
   tgSend(chatId, reply, "Markdown");
   return jsonOut({ ok: true });
