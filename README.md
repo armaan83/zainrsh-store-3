@@ -110,31 +110,45 @@ gateway (PhonePe Business, Razorpay, etc.) removes this risk — the Apps Script
 a dormant PhonePe integration built in (see the bottom of `Code.gs`) that can be reactivated later
 without a full rebuild.
 
-## Editing products
+## Editing products (now managed from Google Sheets — no code pushes!)
 
-Everything is in `js/products.js`. Each product looks like:
+The catalog is **live from your Google Sheet**. You edit a row and the site updates within ~1
+minute — no editing `products.js`, no GitHub push.
 
-```js
-{
-  id: "ear-005",             // must be unique, never reuse
-  category: "Earrings",       // Earrings | Necklaces | Rings | Bracelets (or add new ones — see below)
-  name: "New Piece Name",
-  price: 399,
-  mrp: 599,                    // set equal to price if there's no discount
-  image: "images/your-photo.jpg",
-  description: "Short one-line description.",
-  inStock: true
-}
-```
+**One-time setup (after deploying Code.gs as a Web App):**
 
-To add a new category, add it to the product list and also add a matching button in the
-`.chain-categories` block in `index.html`.
+1. In your order-logging Sheet, you'll see a tab called **`Products`** (created automatically on
+   first load, or run the `seedProducts` function once from the Apps Script editor to prefill the
+   starter 12 items).
+2. The columns are (row 1 = headers, exact names):
+   | Column | What to put |
+   |---|---|
+   | `id` | unique id, e.g. `ear-005` — never reuse, the cart relies on it |
+   | `category` | `Earrings`, `Necklaces`, `Rings`, `Bracelets` — or any new category (tabs build automatically) |
+   | `name` | product name |
+   | `price` | selling price as a number, **no ₹ sign** (e.g. `449`) |
+   | `mrp` | "was" price for the discount sticker — leave blank for no sticker |
+   | `image` | **full image URL** (e.g. `https://your-host.com/photo.jpg`) or a path inside `images/` |
+   | `description` | one-line text |
+   | `inStock` | `TRUE` / `FALSE` (FALSE hides the Add-to-bag button) |
+
+3. Add / edit / delete rows freely. The storefront calls
+   `?action=getProducts` on every load and renders whatever is in the sheet.
+
+**About images:** paste any direct image URL into the `image` column (Google Drive "Anyone with
+link" share links won't work — use a real image host, Imgur, or host in the repo's `images/`
+folder and use a `images/your-photo.jpg` path). If an image fails to load, a placeholder shows.
+
+To manage everything from the sheet instead of GitHub, you only ever touch: the `Products` tab
+(for the catalog) and the `Orders` tab (where sales land). `js/products.js` is now just the
+loader — you don't need to edit it.
 
 ## Swapping in real product photos
 
-Drop your photos into the `images/` folder (JPG or PNG, roughly square works best — 800×800px
-is a good size) and point each product's `image` field at the new filename. Compress photos
-before uploading (e.g. [tinypng.com](https://tinypng.com)) so pages load quickly on mobile data.
+Easiest: upload each photo to an image host (or your own site) and paste the URL into the sheet's
+`image` column. Alternatively drop files in the repo's `images/` folder, commit/push, and use a
+`images/your-photo.jpg` path. Compress before uploading (e.g. [tinypng.com](https://tinypng.com))
+so pages load fast on mobile data.
 
 ## Notes
 

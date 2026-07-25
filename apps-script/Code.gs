@@ -27,6 +27,7 @@
 
 const SHEET_ID = "PASTE_YOUR_GOOGLE_SHEET_ID_HERE";
 const SHEET_NAME = "Orders";
+const PRODUCTS_SHEET_NAME = "Products";
 
 function doPost(e) {
   const output = ContentService.createTextOutput();
@@ -54,6 +55,82 @@ function doPost(e) {
   }
 
   return output;
+}
+
+// ============================================================
+// PRODUCTS — served live to the storefront (GET, from the sheet)
+// ============================================================
+
+function doGet(e) {
+  const action = (e && e.parameter && e.parameter.action) || "";
+  if (action === "getProducts") {
+    return getProductsJson();
+  }
+  return ContentService.createTextOutput(
+    JSON.stringify({ success: false, error: "Unknown action: " + action })
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
+// Reads the "Products" tab and returns a JSON array. The storefront fetches this
+// so you can manage the catalog straight from the sheet — no code deploys needed.
+// Expected columns (row 1 = headers):
+//   id | category | name | price | mrp | image | description | inStock
+function getProductsJson() {
+  const out = ContentService.createTextOutput();
+  out.setMimeType(ContentService.MimeType.JSON);
+  try {
+    const sheet = getProductsSheet();
+    const data = sheet.getDataRange().getValues();
+    if (data.length < 2) {
+      out.setContent(JSON.stringify({ success: true, products: [] }));
+      return out;
+    }
+    const headers = data[0].map(h => String(h).trim().toLowerCase());
+    const col = {};
+    ["id", "category", "name", "price", "mrp", "image", "description", "instock"]
+      .forEach(k => { col[k] = headers.indexOf(k); });
+
+    const products = [];
+    const seen = {};
+    for (let r = 1; r < data.length; r++) {
+      const row = data[r];
+      const name = col.name > -1 ? String(row[col.name]).trim() : "";
+      if (!name) continue; // skip empty rows
+      let id = col.id > -1 ? String(row[col.id]).trim() : "";
+      if (!id) id = "prod-" + r;
+      if (seen[id]) continue; // skip duplicate ids
+      seen[id] = true;
+      products.push({
+        id: id,
+        category: col.category > -1 ? String(row[col.category]).trim() : "Uncategorized",
+        name: name,
+        price: numOr(col.price > -1 ? row[col.price] : 0, 0),
+        mrp: col.mrp > -1 ? numOr(row[col.mrp], 0) : 0,
+        image: (col.image > -1 && String(row[col.image]).trim())
+          ? String(row[col.image]).trim() : "images/placeholder-earring-1.svg",
+        description: col.description > -1 ? String(row[col.description]).trim() : "",
+        inStock: parseBool(col.instock > -1 ? row[col.instock] : "", true)
+      });
+    }
+    out.setContent(JSON.stringify({ success: true, products: products }));
+  } catch (err) {
+    out.setContent(JSON.stringify({ success: false, error: err.message }));
+  }
+  return out;
+}
+
+function numOr(v, d) {
+  const n = Number(v);
+  return isNaN(n) ? d : n;
+}
+
+function parseBool(v, d) {
+  if (typeof v === "boolean") return v;
+  const s = String(v).trim().toLowerCase();
+  if (s === "") return d;
+  if (s === "false" || s === "no" || s === "0") return false;
+  if (s === "true" || s === "yes" || s === "1") return true;
+  return d;
 }
 
 // ============================================================
@@ -117,6 +194,50 @@ function sendOwnerAlert(orderId, customer, items, total, paymentMode) {
 function getSheet() {
   return SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME)
     || SpreadsheetApp.openById(SHEET_ID).insertSheet(SHEET_NAME);
+}
+
+function getProductsSheet() {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  let s = ss.getSheetByName(PRODUCTS_SHEET_NAME);
+  if (!s) {
+    s = ss.insertSheet(PRODUCTS_SHEET_NAME);
+    // Seed the header row so the tab is ready to fill in.
+    s.appendRow(["id", "category", "name", "price", "mrp", "image", "description", "inStock"]);
+  }
+  return s;
+}
+
+// ============================================================
+// SEED — run this ONCE from the Apps Script editor (Run ▶ seedProducts)
+// to copy the starter catalog into the "Products" tab. After that, manage
+// everything from the sheet — no need to run this again.
+// ============================================================
+function seedProducts() {
+  const sheet = getProductsSheet();
+  // Clear existing product rows (keep header) so we don't duplicate on re-run.
+  if (sheet.getLastRow() > 1) sheet.getRange(2, 1, sheet.getLastRow() - 1, 8).clearContent();
+
+  const seed = [
+    ["ear-001","Earrings","Meera Jhumka",449,699,"images/placeholder-earring-1.svg","Antique gold-tone jhumka with pearl drops.","TRUE"],
+    ["ear-002","Earrings","Layla Hoops",299,449,"images/placeholder-earring-2.svg","Minimal statement hoops, everyday wear.","TRUE"],
+    ["ear-003","Earrings","Noor Chandbali",549,799,"images/placeholder-earring-3.svg","Traditional chandbali with kundan work.","TRUE"],
+    ["ear-004","Earrings","Ivy Studs",199,299,"images/placeholder-earring-4.svg","Everyday minimal studs, hypoallergenic posts.","TRUE"],
+    ["neck-001","Necklaces","Anaya Layered Chain",649,899,"images/placeholder-necklace-1.svg","Double-layer chain necklace, gold-plated finish.","TRUE"],
+    ["neck-002","Necklaces","Farah Pendant",399,599,"images/placeholder-necklace-2.svg","Delicate pendant on a fine chain.","TRUE"],
+    ["neck-003","Necklaces","Rania Choker",599,849,"images/placeholder-necklace-3.svg","Statement choker with stonework.","FALSE"],
+    ["ring-001","Rings","Zoya Band",249,349,"images/placeholder-ring-1.svg","Adjustable band ring, tarnish-resistant plating.","TRUE"],
+    ["ring-002","Rings","Amira Stack Set",349,499,"images/placeholder-ring-2.svg","Set of 3 stackable rings, adjustable sizing.","TRUE"],
+    ["brac-001","Bracelets","Sana Chain Bracelet",329,449,"images/placeholder-bracelet-1.svg","Classic chain bracelet with lobster clasp.","TRUE"],
+    ["brac-002","Bracelets","Elora Charm Bracelet",379,549,"images/placeholder-bracelet-2.svg","Charm bracelet, adjustable extender chain.","TRUE"],
+    ["brac-003","Bracelets","Yara Cuff",299,429,"images/placeholder-bracelet-3.svg","Open cuff bracelet, one-size-fits-most.","TRUE"]
+  ];
+
+  // Append header if the sheet is brand new/empty.
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["id","category","name","price","mrp","image","description","inStock"]);
+  }
+  seed.forEach(row => sheet.appendRow(row));
+  return "Seeded " + seed.length + " products into the '" + PRODUCTS_SHEET_NAME + "' tab.";
 }
 
 function logOrder(merchantOrderId, customer, items, total, status, paymentMode) {
