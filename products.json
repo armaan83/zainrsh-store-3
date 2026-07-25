@@ -18,5 +18,15 @@
     "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
     "id": "direct-webhook-test-00463",
     "inStock": true
+  },
+  {
+    "name": "Direct Webhook Test 2",
+    "category": "Earrings",
+    "price": 350,
+    "mrp": 599,
+    "description": "",
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "id": "direct-webhook-test-2-29164",
+    "inStock": true
   }
 ]
