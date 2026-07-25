@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Zainrsh Accessories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">Zain<span>rsh</span></a>
+    <nav class="nav-links">
+      <a href="index.html#catalog">Shop</a>
+      <a href="index.html#about">About</a>
+    </nav>
+    <div class="header-actions">
+      <button class="cart-btn" onclick="openCart()">
+        Bag <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="checkout-wrap">
+
+  <!-- ===== Step 1: details form ===== -->
+  <div id="checkout-view">
+    <h1>Checkout</h1>
+    <p class="sub">Enter your details, then pay by UPI or choose Cash on Delivery.</p>
+
+    <div class="order-summary" id="order-summary">
+      <!-- Filled by checkout.js -->
+    </div>
+
+    <form id="checkout-form" novalidate>
+      <div class="form-group">
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" required>
+        <div class="form-error" id="err-name">Please enter your name.</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
+          <div class="form-error" id="err-phone">Enter a valid 10-digit phone number.</div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+          <div class="form-error" id="err-email">Enter a valid email address.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Delivery address</label>
+        <textarea id="address" name="address" rows="3" required placeholder="House / street / area"></textarea>
+        <div class="form-error" id="err-address">Please enter your delivery address.</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" name="city" required>
+          <div class="form-error" id="err-city">Please enter your city.</div>
+        </div>
+        <div class="form-group">
+          <label for="pincode">Pincode</label>
+          <input type="text" id="pincode" name="pincode" pattern="[0-9]{6}" placeholder="6-digit pincode" required>
+          <div class="form-error" id="err-pincode">Enter a valid 6-digit pincode.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="state">State</label>
+        <input type="text" id="state" name="state" required>
+        <div class="form-error" id="err-state">Please enter your state.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Payment method</label>
+        <div class="payment-options">
+          <label class="payment-option">
+            <input type="radio" name="paymentMethod" value="upi" checked>
+            <span class="payment-option-main">
+              <span class="payment-option-title">Pay by UPI</span>
+              <span class="payment-option-sub">Scan a QR code — Google Pay, PhonePe, Paytm or any UPI app</span>
+            </span>
+          </label>
+          <label class="payment-option">
+            <input type="radio" name="paymentMethod" value="cod">
+            <span class="payment-option-main">
+              <span class="payment-option-title">Cash on Delivery</span>
+              <span class="payment-option-sub">Pay the courier when your order arrives (+₹49 handling fee)</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="pay-btn" id="pay-btn">Continue to payment</button>
+      <div class="form-error" id="err-cart" style="text-align:center; margin-top:14px;">Your bag is empty — add something before checking out.</div>
+    </form>
+  </div>
+
+  <!-- ===== Step 2: UPI QR payment panel (shown only for the UPI method) ===== -->
+  <div id="payment-view" style="display:none;">
+    <div class="eyebrow">Pay by UPI</div>
+    <h1>Scan &amp; pay</h1>
+    <p class="sub">Pay <strong id="upi-amount-text">₹0</strong> using any UPI app, then tap "I've paid" below.</p>
+
+    <div class="upi-panel">
+      <img id="upi-qr-image" src="" alt="UPI QR code" class="upi-qr">
+      <div class="upi-id-row">
+        <span class="upi-id-label">UPI ID</span>
+        <span class="upi-id-value" id="upi-id-value"></span>
+      </div>
+      <a id="upi-app-link" href="#" class="btn-ghost upi-app-btn">Open UPI app</a>
+      <p class="upi-panel-note">On a phone? Tap "Open UPI app" to pay directly. On a computer? Scan the QR code with your phone's UPI app.</p>
+    </div>
+
+    <button type="button" class="pay-btn" id="confirm-paid-btn">I've paid</button>
+    <button type="button" class="btn-ghost" id="back-to-form-btn" style="width:100%; margin-top:12px;">Back to details</button>
+  </div>
+
+</main>
+
+<!-- Cart drawer (kept for consistent header behavior) -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<aside class="cart-drawer" id="cart-drawer">
+  <div class="cart-header">
+    <h2>Your bag</h2>
+    <button class="cart-close" onclick="closeCart()" aria-label="Close cart">&times;</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <div class="cart-subtotal-row">
+      <span>Subtotal</span>
+      <strong id="cart-subtotal">₹0</strong>
+    </div>
+  </div>
+</aside>
+
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/config.js"></script>
+<script src="js/checkout.js"></script>
+</body>
+</html>

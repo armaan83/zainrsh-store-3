@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Status — Zainrsh Accessories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">Zain<span>rsh</span></a>
+    <div></div>
+    <div></div>
+  </div>
+</header>
+
+<main class="checkout-status wrap" id="status-content">
+  <div class="eyebrow">Checking your payment</div>
+  <h1>One moment…</h1>
+  <p style="color: rgba(26,20,17,0.6);">Confirming your order with PhonePe. This usually takes a few seconds.</p>
+</main>
+
+<script src="js/config.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const merchantOrderId = params.get("order");
+  const method = params.get("method");
+  const el = document.getElementById("status-content");
+
+  function renderConfirmed(orderId) {
+    localStorage.removeItem("zainrsh_cart_v1");
+    localStorage.removeItem("zainrsh_pending_order");
+    el.innerHTML = `
+      <div class="eyebrow" style="color:#1F3D2E;">Order confirmed</div>
+      <h1>Thank you for your order</h1>
+      <p style="max-width:420px; margin: 0 auto 12px; color: rgba(26,20,17,0.65);">
+        We've received your payment and will get your order packed and shipped shortly.
+      </p>
+      <p style="font-size:0.85rem; color: rgba(26,20,17,0.5); margin-bottom:28px;">Order reference: ${orderId}</p>
+      <a href="index.html" class="btn-primary">Continue shopping</a>
+    `;
+  }
+
+  function renderCodConfirmed(orderId) {
+    el.innerHTML = `
+      <div class="eyebrow" style="color:#1F3D2E;">Order placed</div>
+      <h1>Your order is confirmed</h1>
+      <p style="max-width:420px; margin: 0 auto 12px; color: rgba(26,20,17,0.65);">
+        Pay the delivery courier when your order arrives. We'll get it packed and shipped shortly.
+      </p>
+      <p style="font-size:0.85rem; color: rgba(26,20,17,0.5); margin-bottom:28px;">Order reference: ${orderId}</p>
+      <a href="index.html" class="btn-primary">Continue shopping</a>
+    `;
+  }
+
+  function renderUpiConfirmed(orderId, logFailed) {
+    localStorage.removeItem("zainrsh_cart_v1");
+    el.innerHTML = `
+      <div class="eyebrow" style="color:#1F3D2E;">Thank you</div>
+      <h1>Thanks for your order — we are preparing your order now</h1>
+      <p style="max-width:440px; margin: 0 auto 12px; color: rgba(26,20,17,0.65);">
+        We'll confirm your UPI payment shortly and get your order packed and shipped.
+      </p>
+      <p style="font-size:0.85rem; color: rgba(26,20,17,0.5); margin-bottom:28px;">Order reference: ${orderId}</p>
+      <a href="index.html" class="btn-primary">Continue shopping</a>
+    `;
+  }
+
+  function renderFailed() {
+    el.innerHTML = `
+      <div class="eyebrow" style="color:#8C3B4A;">Payment failed</div>
+      <h1>Something didn't go through</h1>
+      <p style="max-width:420px; margin: 0 auto 28px; color: rgba(26,20,17,0.65);">
+        Your payment could not be confirmed. If any amount was deducted, it will be refunded
+        automatically by PhonePe within a few business days. Please try again.
+      </p>
+      <a href="checkout.html" class="btn-primary">Try again</a>
+    `;
+  }
+
+  function renderNoOrder() {
+    el.innerHTML = `
+      <h1>No order found</h1>
+      <p style="margin-bottom:28px; color: rgba(26,20,17,0.65);">This page is meant to be reached after checkout.</p>
+      <a href="index.html" class="btn-primary">Back to shop</a>
+    `;
+  }
+
+  function renderStillPending() {
+    el.innerHTML = `
+      <div class="eyebrow">Still processing</div>
+      <h1>Taking a little longer than usual</h1>
+      <p style="max-width:420px; margin: 0 auto 28px; color: rgba(26,20,17,0.65);">
+        We haven't received final confirmation from PhonePe yet. If you completed the payment,
+        it should confirm shortly — you can refresh this page in a minute. If you didn't complete
+        the payment, it's safe to try again.
+      </p>
+      <a href="checkout.html" class="btn-primary">Back to checkout</a>
+    `;
+  }
+
+  async function pollStatus(attempt = 0) {
+    try {
+      const res = await fetch(CONFIG.APPS_SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "checkStatus", merchantOrderId })
+      });
+      const data = await res.json();
+
+      if (data.state === "COMPLETED") {
+        renderConfirmed(merchantOrderId);
+      } else if (data.state === "FAILED") {
+        renderFailed();
+      } else if (attempt < 5) {
+        // still PENDING — PhonePe can take a few seconds to finalize; retry a few times
+        setTimeout(() => pollStatus(attempt + 1), 2000);
+      } else {
+        renderStillPending();
+      }
+    } catch (err) {
+      console.error(err);
+      renderStillPending();
+    }
+  }
+
+  if (!merchantOrderId) {
+    renderNoOrder();
+  } else if (method === "cod") {
+    renderCodConfirmed(merchantOrderId);
+  } else if (method === "upi") {
+    renderUpiConfirmed(merchantOrderId, params.get("logfailed") === "1");
+  } else {
+    pollStatus();
+  }
+</script>
+</body>
+</html>
