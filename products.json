@@ -1,5 +1,15 @@
 [
   {
+    "id": "sheet-sync-test",
+    "category": "Rings",
+    "name": "Sheet Sync Test",
+    "price": 199,
+    "mrp": 299,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "description": "test via sheet",
+    "inStock": true
+  },
+  {
     "name": "Mera Necklace",
     "category": "Necklace",
     "price": 449,
