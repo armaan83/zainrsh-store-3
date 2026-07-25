@@ -10,6 +10,16 @@
     "inStock": true
   },
   {
+    "id": "mera-necklace",
+    "category": "Necklace",
+    "name": "Mera Necklace",
+    "price": 287,
+    "mrp": 399,
+    "image": "https://imgur.com/uUYDSpS",
+    "description": "Top Necklace",
+    "inStock": true
+  },
+  {
     "name": "Mera Necklace",
     "category": "Necklace",
     "price": 449,
