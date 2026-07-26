@@ -1,6 +1,6 @@
 [
   {
-    "id": "sheet-sync-test",
+    "id": "1",
     "category": "Rings",
     "name": "Sheet Sync Test",
     "price": 199,
@@ -11,7 +11,7 @@
     "inStock": true
   },
   {
-    "id": "mera-necklace",
+    "id": "2",
     "category": "Necklace",
     "name": "Mera Necklace",
     "price": 287,
@@ -22,7 +22,7 @@
     "inStock": true
   },
   {
-    "id": "kastu",
+    "id": "3",
     "category": "Ear Ring",
     "name": "Kastu",
     "price": 229,
@@ -33,7 +33,7 @@
     "inStock": true
   },
   {
-    "id": "shryt",
+    "id": "4",
     "category": "Bangles",
     "name": "Shryt",
     "price": 657,
