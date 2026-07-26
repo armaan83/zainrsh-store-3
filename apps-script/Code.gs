@@ -126,7 +126,7 @@ function doPost(e) {
     const cmd = text.split(" ")[0].toLowerCase();
     const arg = text.slice(cmd.length).trim();
     if (cmd === "/start" || cmd === "/help") {
-      tgSend(chatId, "To add a product, just send a *photo* — I'll ask for Name, Category, Price, MRP and Description one by one.\n\nOr send photo + caption with all fields at once:\nName: Meera Jhumka\nCategory: Earrings\nPrice: 449\nMRP: 699\nDescription: antique gold jhumka\n\nCommands:\n/list  /delete <id>  /status  /cancel  /help\n(reply /skip for optional MRP & Description)");
+      tgSend(chatId, "To add a product, just send a *photo* — I'll ask for Name, Category, Price, MRP and Description one by one.\n\nOr send photo + caption with all fields at once:\nName: Meera Jhumka\nCategory: Earrings\nPrice: 449\nMRP: 699\nDescription: antique gold jhumka\n\nCommands:\n/list  /delete <id>  /status  /cancel  /help\n(reply /skip for optional MRP & Description)\n\nOrder alerts:\n/subscribe — get every new-order alert on this chat\n/unsubscribe — stop getting order alerts\n/subscribers — list who currently gets alerts");
     } else if (cmd === "/add") {
       tgSend(chatId, "Just send a photo (or image URL) + caption:\nName: …\nCategory: …\nPrice: …\nMRP: … (optional)\nDescription: … (optional)");
     } else if (cmd === "/list") {
@@ -140,6 +140,23 @@ function doPost(e) {
       const d = getDraft(chatId);
       const last = draftStore().getProperty("lastError_" + chatId);
       tgSend(chatId, "🐞 draft: " + (d ? JSON.stringify(d) : "(none)") + (last ? "\nlastErr: " + last : ""), "Markdown");
+    } else if (cmd === "/subscribe") {
+      const owner = getScriptProp("OWNER_CHAT_ID", "");
+      if (String(chatId) === String(owner)) {
+        tgSend(chatId, "✅ You're the owner — you already get every order alert.");
+      } else {
+        addAlertChat(chatId);
+        tgSend(chatId, "✅ Subscribed! You'll now receive every new-order alert. Send /unsubscribe to stop.");
+      }
+    } else if (cmd === "/unsubscribe") {
+      removeAlertChat(chatId);
+      tgSend(chatId, "🚫 Unsubscribed. You'll no longer receive order alerts.");
+    } else if (cmd === "/subscribers") {
+      const ids = getAlertChatIds();
+      const owner = getScriptProp("OWNER_CHAT_ID", "");
+      tgSend(chatId, "📋 Order-alert recipients (" + ids.length + "):\n" +
+        ids.map(function (id) { return (String(id) === String(owner) ? "👑 " : "• ") + id; }).join("\n"),
+        "Markdown");
     } else if (cmd === "/status") {
       const props = PropertiesService.getScriptProperties().getProperties();
       const keys = Object.keys(props);
@@ -469,6 +486,37 @@ function tgSend(chatId, text, parseMode) {
   UrlFetchApp.fetch(url, { method: "post", contentType: "application/json", payload: JSON.stringify(payload), muteHttpExceptions: true });
 }
 
+// --- Multi-recipient order alerts -------------------------------------------------
+// Owner (OWNER_CHAT_ID) always gets alerts. Additional teammates subscribe via the
+// bot (/subscribe) and are stored in ALERT_CHAT_IDS (comma-separated). Anyone in the
+// list receives every order ping. /unsubscribe removes them.
+function getAlertChatIds() {
+  const ids = [];
+  const owner = getScriptProp("OWNER_CHAT_ID", "");
+  if (owner) ids.push(String(owner));
+  const raw = getScriptProp("ALERT_CHAT_IDS", "");
+  raw.split(",").map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (id) {
+    if (ids.indexOf(id) === -1) ids.push(id);
+  });
+  return ids;
+}
+
+function addAlertChat(chatId) {
+  const sp = PropertiesService.getScriptProperties();
+  const ids = (sp.getProperty("ALERT_CHAT_IDS") || "")
+    .split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+  if (ids.indexOf(String(chatId)) === -1) ids.push(String(chatId));
+  sp.setProperty("ALERT_CHAT_IDS", ids.join(","));
+}
+
+function removeAlertChat(chatId) {
+  const sp = PropertiesService.getScriptProperties();
+  const ids = (sp.getProperty("ALERT_CHAT_IDS") || "")
+    .split(",").map(function (s) { return s.trim(); }).filter(Boolean)
+    .filter(function (id) { return id !== String(chatId); });
+  sp.setProperty("ALERT_CHAT_IDS", ids.join(","));
+}
+
 function downloadTelegramFile(fileId) {
   const token = getBotToken();
   const info = UrlFetchApp.fetch("https://api.telegram.org/bot" + token + "/getFile?file_id=" + fileId, { muteHttpExceptions: true });
@@ -519,24 +567,25 @@ function sendOwnerAlert(orderId, customer, items, total, paymentMode) {
     console.error("Failed to send owner alert email: " + err.message);
   }
 
-  // Telegram ping to the owner (every order path — UPI "I've paid" + COD).
+  // Telegram ping to the owner + every subscribed teammate (every order path).
   try {
-    const ownerId = getScriptProp("OWNER_CHAT_ID", "");
-    if (ownerId) {
-      const itemsSummary = (items || []).map(function (i) { return i.name + " x" + i.qty; }).join(", ");
-      const lines = [
-        "🔔 *New order — " + paymentMode + "*",
-        "Order: `" + orderId + "`",
-        "Total: ₹" + total,
-        "Customer: " + (customer ? customer.name : ""),
-        "Phone: " + (customer ? customer.phone : ""),
-        "Items: " + itemsSummary,
-        (customer ? customer.city : "") + (customer && customer.state ? ", " + customer.state : "") + " - " + (customer ? customer.pincode : ""),
-        (customer && customer.email ? "Email: " + customer.email : ""),
-        (paymentMode.indexOf("UPI") === 0 ? "⚠️ Verify against your UPI app before shipping." : "")
-      ].filter(Boolean);
-      tgSend(ownerId, lines.join("\n"), "Markdown");
-    }
+    const itemsSummary = (items || []).map(function (i) { return i.name + " x" + i.qty; }).join(", ");
+    const lines = [
+      "🔔 *New order — " + paymentMode + "*",
+      "Order: `" + orderId + "`",
+      "Total: ₹" + total,
+      "Customer: " + (customer ? customer.name : ""),
+      "Phone: " + (customer ? customer.phone : ""),
+      "Items: " + itemsSummary,
+      (customer ? customer.city : "") + (customer && customer.state ? ", " + customer.state : "") + " - " + (customer ? customer.pincode : ""),
+      (customer && customer.email ? "Email: " + customer.email : ""),
+      (paymentMode.indexOf("UPI") === 0 ? "⚠️ Verify against your UPI app before shipping." : "")
+    ].filter(Boolean);
+    const alertText = lines.join("\n");
+    getAlertChatIds().forEach(function (id) {
+      try { tgSend(id, alertText, "Markdown"); }
+      catch (e) { console.error("alert to " + id + " failed: " + e.message); }
+    });
   } catch (err) {
     console.error("Failed to send owner alert Telegram: " + err.message);
   }
