@@ -524,7 +524,7 @@ function getProductsSheet() {
   let s = ss.getSheetByName(PRODUCTS_SHEET_NAME);
   if (!s) {
     s = ss.insertSheet(PRODUCTS_SHEET_NAME);
-    s.appendRow(["id", "category", "name", "price", "mrp", "image", "images", "description", "inStock"]);
+    s.appendRow(["id", "category", "name", "price", "mrp", "image", "description", "inStock"]);
   }
   return s;
 }
@@ -690,9 +690,20 @@ function buildProductsFromSheet() {
     const mrpRaw = row[idx.mrp] != null ? String(row[idx.mrp]) : "0";
     const price = parseFloat(priceRaw.replace(/[^0-9.]/g, "")) || 0;
     const mrp = parseFloat(mrpRaw.replace(/[^0-9.]/g, "")) || 0;
-    const image = (row[idx.image] != null ? String(row[idx.image]) : "").trim();
-    const imagesRaw = (row[idx.images] != null ? String(row[idx.images]) : "").trim();
-    const images = imagesRaw ? imagesRaw.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
+    const imageCol = idx.image != null ? idx.image : (idx.images != null ? idx.images : -1);
+    const imageRaw = imageCol >= 0 ? String(row[imageCol]).trim() : "";
+    const parts = imageRaw ? imageRaw.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
+    const image = parts[0] || "";
+    // If the user typed several URLs in the single image column
+    // (comma-separated), the first is the main photo and the rest become
+    // gallery thumbnails. An OPTIONAL separate `images` column can also add
+    // more (only used when both columns exist).
+    let extra = [];
+    if (idx.images != null && idx.images !== imageCol) {
+      const ir = (row[idx.images] != null ? String(row[idx.images]) : "").trim();
+      extra = ir ? ir.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
+    }
+    const images = parts.slice(1).concat(extra);
     const description = (row[idx.description] != null ? String(row[idx.description]) : "").trim();
     const inStockRaw = row[idx.instock] != null ? String(row[idx.instock]).trim().toLowerCase() : "";
     const inStock = inStockRaw === "" ? true : (inStockRaw === "true" || inStockRaw === "yes" || inStockRaw === "1");
