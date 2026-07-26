@@ -61,12 +61,28 @@ function getBotToken() { return getScriptProp("TELEGRAM_BOT_TOKEN", ""); }
 // Telegram webhook entry point
 // ---------------------------------------------------------------------------
 function doPost(e) {
-  let update;
+  let payload;
   try {
-    update = JSON.parse(e.postData.contents);
+    payload = JSON.parse(e.postData.contents);
   } catch (err) {
     return jsonOut({ ok: false, error: "bad json" });
   }
+
+  // --- Store checkout orders (from checkout.js) ---
+  // checkout.js POSTs { action: "createManualUpiOrder" | "createCodOrder", ... }.
+  // Check this BEFORE the Telegram webhook branch, because order payloads have no
+  // update_id/message and would otherwise fall through to "no message".
+  if (payload && payload.action) {
+    try {
+      if (payload.action === "createManualUpiOrder") return jsonOut(createManualUpiOrder(payload));
+      if (payload.action === "createCodOrder") return jsonOut(createCodOrder(payload));
+      return jsonOut({ ok: false, error: "unknown action: " + payload.action });
+    } catch (err) {
+      return jsonOut({ ok: false, error: String(err && err.message ? err.message : err) });
+    }
+  }
+
+  const update = payload;
 
   // Dedupe: Telegram retries webhook delivery on slow responses (Apps Script
   // cold starts), which causes the same update to be processed 2-3x. Ignore
@@ -501,6 +517,28 @@ function sendOwnerAlert(orderId, customer, items, total, paymentMode) {
     });
   } catch (err) {
     console.error("Failed to send owner alert email: " + err.message);
+  }
+
+  // Telegram ping to the owner (every order path — UPI "I've paid" + COD).
+  try {
+    const ownerId = getScriptProp("OWNER_CHAT_ID", "");
+    if (ownerId) {
+      const itemsSummary = (items || []).map(function (i) { return i.name + " x" + i.qty; }).join(", ");
+      const lines = [
+        "🔔 *New order — " + paymentMode + "*",
+        "Order: `" + orderId + "`",
+        "Total: ₹" + total,
+        "Customer: " + (customer ? customer.name : ""),
+        "Phone: " + (customer ? customer.phone : ""),
+        "Items: " + itemsSummary,
+        (customer ? customer.city : "") + (customer && customer.state ? ", " + customer.state : "") + " - " + (customer ? customer.pincode : ""),
+        (customer && customer.email ? "Email: " + customer.email : ""),
+        (paymentMode.indexOf("UPI") === 0 ? "⚠️ Verify against your UPI app before shipping." : "")
+      ].filter(Boolean);
+      tgSend(ownerId, lines.join("\n"), "Markdown");
+    }
+  } catch (err) {
+    console.error("Failed to send owner alert Telegram: " + err.message);
   }
 }
 
