@@ -44,7 +44,7 @@
     "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
     "images": [],
     "description": "New Banle",
-    "inStock": true
+    "inStock": false
   },
   {
     "id": "5",
@@ -55,7 +55,7 @@
     "image": "https://i.postimg.cc/nrMn7hKZ/Screenshot-2026-07-25-at-12-59-24-PM.png",
     "images": [],
     "description": "Trending",
-    "inStock": true
+    "inStock": false
   },
   {
     "id": "ring",
