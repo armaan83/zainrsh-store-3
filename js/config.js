@@ -13,7 +13,7 @@ const CONFIG = {
 
   // Orders/checkout go through the Apps Script Web App (still used for the Sheet + orders).
   // Looks like: https://script.google.com/macros/s/AKfycb.../exec
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwG1zVAfbmw5uPxqoLx1J-RwOEo-49FKw6y5iaBl_bxrYUOXVe4D_0LYoGAmU57Iy2OYQ/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyMqgmOa_cTV1u1tfcxpLueKnzn8WeZoplxcA8OoODcpiFDl2y5Voz3OBz2evqOLh13Jg/exec",
 
   // The catalog is now published directly to the repo as products.json by the Telegram bot.
   // It lives in the repo root and is served by GitHub Pages for free.
