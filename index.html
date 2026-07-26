@@ -89,5 +89,14 @@
 <script src="js/products.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/catalog.js"></script>
+
+<!-- Lightbox overlay (click a product image to pop it out) -->
+<div id="lightbox-overlay" class="lightbox-overlay" style="display:none" onclick="if(event.target===this) closeLightbox()">
+  <button type="button" class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+  <button type="button" id="lightbox-prev" class="lightbox-nav lightbox-prev" onclick="lightboxStep(-1)" aria-label="Previous">&#10094;</button>
+  <img id="lightbox-img" class="lightbox-img" src="" alt="Product image">
+  <button type="button" id="lightbox-next" class="lightbox-nav lightbox-next" onclick="lightboxStep(1)" aria-label="Next">&#10095;</button>
+  <div id="lightbox-counter" class="lightbox-counter"></div>
+</div>
 </body>
 </html>

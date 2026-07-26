@@ -35,7 +35,7 @@ function productCardHTML(product) {
     <div class="product-card" data-category="${escAttr(product.category)}">
       <div class="product-image">
         ${!product.inStock ? '<span class="product-badge oos">Sold out</span>' : (off > 0 ? `<span class="product-badge">${off}% off</span>` : '')}
-        <img class="main-img" src="${escAttr(mainSrc)}" alt="${escAttr(product.name)}" loading="lazy" onerror="this.src='images/placeholder-earring-1.svg'">
+        <img class="main-img" src="${escAttr(mainSrc)}" alt="${escAttr(product.name)}" loading="lazy" onclick="openLightbox('${product.id}')" style="cursor:zoom-in" onerror="this.src='images/placeholder-earring-1.svg'">
         ${galleryHTML(product)}
       </div>
       <div class="product-info">
@@ -65,6 +65,67 @@ function swapProductImage(thumb) {
   card.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
   thumb.classList.add("active");
 }
+
+// ----- Lightbox (click image to pop out) -----
+let lightboxState = { images: [], index: 0 };
+
+function openLightbox(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  if (!product) return;
+  const imgs = productImages(product);
+  if (!imgs.length) return;
+  lightboxState.images = imgs;
+  // Start on the image currently shown as the card's main image.
+  let start = 0;
+  const cardEl = document.querySelector('.product-card[data-id="' + productId + '"]');
+  if (cardEl) {
+    const main = cardEl.querySelector(".main-img");
+    if (main) {
+      const cur = main.getAttribute("src");
+      const found = imgs.findIndex(u => u === cur);
+      if (found >= 0) start = found;
+    }
+  }
+  lightboxState.index = start;
+  renderLightbox();
+  const ov = document.getElementById("lightbox-overlay");
+  if (ov) ov.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function renderLightbox() {
+  const img = document.getElementById("lightbox-img");
+  const counter = document.getElementById("lightbox-counter");
+  if (!img) return;
+  img.src = lightboxState.images[lightboxState.index];
+  if (counter) counter.textContent = (lightboxState.index + 1) + " / " + lightboxState.images.length;
+  const prev = document.getElementById("lightbox-prev");
+  const next = document.getElementById("lightbox-next");
+  if (prev) prev.style.display = lightboxState.images.length > 1 ? "block" : "none";
+  if (next) next.style.display = lightboxState.images.length > 1 ? "block" : "none";
+}
+
+function lightboxStep(dir) {
+  const n = lightboxState.images.length;
+  if (!n) return;
+  lightboxState.index = (lightboxState.index + dir + n) % n;
+  renderLightbox();
+}
+
+function closeLightbox() {
+  const ov = document.getElementById("lightbox-overlay");
+  if (ov) ov.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", function (e) {
+  if (document.getElementById("lightbox-overlay") &&
+      document.getElementById("lightbox-overlay").style.display === "flex") {
+    if (e.key === "Escape") closeLightbox();
+    else if (e.key === "ArrowLeft") lightboxStep(-1);
+    else if (e.key === "ArrowRight") lightboxStep(1);
+  }
+});
 
 function renderCatalog(filterCategory = "All") {
   const grid = document.getElementById("product-grid");
