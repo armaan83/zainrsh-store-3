@@ -6,6 +6,7 @@
     "price": 199,
     "mrp": 299,
     "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
     "description": "test via sheet",
     "inStock": true
   },
@@ -16,6 +17,7 @@
     "price": 287,
     "mrp": 399,
     "image": "https://i.postimg.cc/gcLXdwV6/Screenshot-2026-07-25-at-5-16-23-PM.png",
+    "images": [],
     "description": "Top Necklace",
     "inStock": true
   },
@@ -26,17 +28,19 @@
     "price": 229,
     "mrp": 377,
     "image": "https://i.postimg.cc/5N9hLznr/Screenshot-2026-07-25-at-18-57-03-Pear-Cut-Blue-Topaz-Drop-Earrings-in-Sterling-Silver.png",
+    "images": [],
     "description": "Branded Ear RIng",
     "inStock": true
   },
   {
-    "name": "Mera Necklace",
-    "category": "Necklace",
-    "price": 449,
-    "mrp": 699,
-    "description": "antique golden Necklace.",
-    "image": "images/mera-necklace-1785002421.jpg",
-    "id": "mera-necklace-02422",
+    "id": "shryt",
+    "category": "Bangles",
+    "name": "Shryt",
+    "price": 657,
+    "mrp": 789,
+    "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
+    "images": [],
+    "description": "New Banle",
     "inStock": true
   }
 ]
