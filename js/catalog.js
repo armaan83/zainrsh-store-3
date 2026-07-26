@@ -32,10 +32,10 @@ function productCardHTML(product) {
   const mainSrc = imgs[0] || "images/placeholder-earring-1.svg";
 
   return `
-    <div class="product-card" data-category="${escAttr(product.category)}">
+    <div class="product-card" data-id="${escAttr(product.id)}" data-category="${escAttr(product.category)}">
       <div class="product-image">
         ${!product.inStock ? '<span class="product-badge oos">Sold out</span>' : (off > 0 ? `<span class="product-badge">${off}% off</span>` : '')}
-        <img class="main-img" src="${escAttr(mainSrc)}" alt="${escAttr(product.name)}" loading="lazy" onclick="openLightbox('${product.id}')" style="cursor:zoom-in" onerror="this.src='images/placeholder-earring-1.svg'">
+        <img class="main-img" src="${escAttr(mainSrc)}" alt="${escAttr(product.name)}" loading="lazy" onclick="openLightbox(this)" style="cursor:zoom-in" onerror="this.src='images/placeholder-earring-1.svg'">
         ${galleryHTML(product)}
       </div>
       <div class="product-info">
@@ -69,23 +69,29 @@ function swapProductImage(thumb) {
 // ----- Lightbox (click image to pop out) -----
 let lightboxState = { images: [], index: 0 };
 
-function openLightbox(productId) {
-  const product = PRODUCTS.find(p => p.id === productId);
-  if (!product) return;
-  const imgs = productImages(product);
-  if (!imgs.length) return;
-  lightboxState.images = imgs;
-  // Start on the image currently shown as the card's main image.
+function openLightbox(arg) {
+  // arg is the clicked <img> (this) or a product id string.
+  const imgEl = (arg && arg.tagName === "IMG") ? arg : null;
+  const cardEl = imgEl ? imgEl.closest(".product-card") : null;
+  const productId = cardEl ? cardEl.getAttribute("data-id") : (typeof arg === "string" ? arg : null);
+
+  let imgs = [];
   let start = 0;
-  const cardEl = document.querySelector('.product-card[data-id="' + productId + '"]');
-  if (cardEl) {
-    const main = cardEl.querySelector(".main-img");
-    if (main) {
-      const cur = main.getAttribute("src");
-      const found = imgs.findIndex(u => u === cur);
+  const product = productId ? PRODUCTS.find(p => p.id === productId) : null;
+  if (product) {
+    imgs = productImages(product);
+    // If the card shows a specific image, start there.
+    const cur = imgEl ? imgEl.getAttribute("src") : "";
+    if (cur) {
+      const found = imgs.indexOf(cur);
       if (found >= 0) start = found;
     }
+  } else if (imgEl) {
+    const cur = imgEl.getAttribute("src");
+    if (cur) imgs = [cur];
   }
+  if (!imgs.length) return;
+  lightboxState.images = imgs;
   lightboxState.index = start;
   renderLightbox();
   const ov = document.getElementById("lightbox-overlay");
