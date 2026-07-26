@@ -16,8 +16,11 @@
     "name": "Mera Necklace",
     "price": 287,
     "mrp": 399,
-    "image": "",
-    "images": [],
+    "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
+    "images": [
+      "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+      "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg"
+    ],
     "description": "Top Necklace",
     "inStock": true
   },
