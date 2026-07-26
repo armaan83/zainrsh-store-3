@@ -16,8 +16,11 @@
     "name": "Mera Necklace",
     "price": 287,
     "mrp": 399,
-    "image": "https://i.postimg.cc/gcLXdwV6/Screenshot-2026-07-25-at-5-16-23-PM.png",
-    "images": [],
+    "image": "https://i.imgur.com/one.png",
+    "images": [
+      "https://i.imgur.com/two.png",
+      "https://i.postimg.cc/three.png"
+    ],
     "description": "Top Necklace",
     "inStock": true
   },
