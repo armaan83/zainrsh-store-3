@@ -19,6 +19,12 @@ const CONFIG = {
   // It lives in the repo root and is served by GitHub Pages for free.
   PRODUCTS_JSON_URL: "products.json",
 
+  // WhatsApp contact number for customer support (include country code, no + or spaces).
+  // Customers tap the floating button to message you directly.
+  WHATSAPP_NUMBER: "916355224464",
+
+  // Optional pre-filled message shown when a customer opens the WhatsApp chat.
+  WHATSAPP_MESSAGE: "Hi Zainrsh! I have a question about my order.",
 
   STORE_NAME: "Zainrsh Accessories",
 };
