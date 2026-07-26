@@ -16,13 +16,8 @@
     "name": "Mera Necklace",
     "price": 287,
     "mrp": 399,
-    "image": "https://i.imgur.com/one.png",
-    "images": [
-      "https://i.imgur.com/two.png",
-      "https://i.postimg.cc/three.png",
-      "https://imgur.com/gallery/bruce-loves-wife-qSMSBFe",
-      "https://imgur.com/gallery/its-been-hot-so-we-setup-small-pool-that-raccoon-babies-found-wKzlYSu"
-    ],
+    "image": "",
+    "images": [],
     "description": "Top Necklace",
     "inStock": true
   },
