@@ -256,6 +256,33 @@ img { max-width: 100%; display: block; }
 }
 .product-image img { width: 100%; height: 100%; object-fit: cover; }
 
+.product-thumbs {
+  position: absolute;
+  bottom: 8px; left: 8px; right: 8px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 8px;
+  scrollbar-width: none;
+}
+.product-thumbs::-webkit-scrollbar { display: none; }
+
+.product-thumbs .thumb {
+  flex: 0 0 auto;
+  width: 38px; height: 38px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background: none;
+  line-height: 0;
+}
+.product-thumbs .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.product-thumbs .thumb.active { border-color: var(--gold); }
+
 .product-badge {
   position: absolute;
   top: 10px; left: 10px;

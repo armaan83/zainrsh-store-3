@@ -64,7 +64,14 @@ async function fetchProducts() {
     let arr = Array.isArray(data) ? data : (data && Array.isArray(data.products) ? data.products : []);
     if (arr.length) {
       // normalize images to absolute URLs
-      arr = arr.map(p => Object.assign({}, p, { image: resolveImageUrl(p.image) }));
+      arr = arr.map(p => {
+        const norm = Object.assign({}, p, { image: resolveImageUrl(p.image) });
+        // support both a comma-separated `images` string (from the Sheet) and an array
+        let extra = p.images;
+        if (typeof extra === "string") extra = extra.split(",").map(s => s.trim()).filter(Boolean);
+        if (Array.isArray(extra)) norm.images = extra.map(resolveImageUrl).filter(Boolean);
+        return norm;
+      });
       PRODUCTS = arr;
       try { localStorage.setItem(PRODUCTS_CACHE_KEY, JSON.stringify(PRODUCTS)); } catch (e) {}
     }

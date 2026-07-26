@@ -524,7 +524,7 @@ function getProductsSheet() {
   let s = ss.getSheetByName(PRODUCTS_SHEET_NAME);
   if (!s) {
     s = ss.insertSheet(PRODUCTS_SHEET_NAME);
-    s.appendRow(["id", "category", "name", "price", "mrp", "image", "description", "inStock"]);
+    s.appendRow(["id", "category", "name", "price", "mrp", "image", "images", "description", "inStock"]);
   }
   return s;
 }
@@ -691,6 +691,8 @@ function buildProductsFromSheet() {
     const price = parseFloat(priceRaw.replace(/[^0-9.]/g, "")) || 0;
     const mrp = parseFloat(mrpRaw.replace(/[^0-9.]/g, "")) || 0;
     const image = (row[idx.image] != null ? String(row[idx.image]) : "").trim();
+    const imagesRaw = (row[idx.images] != null ? String(row[idx.images]) : "").trim();
+    const images = imagesRaw ? imagesRaw.split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [];
     const description = (row[idx.description] != null ? String(row[idx.description]) : "").trim();
     const inStockRaw = row[idx.instock] != null ? String(row[idx.instock]).trim().toLowerCase() : "";
     const inStock = inStockRaw === "" ? true : (inStockRaw === "true" || inStockRaw === "yes" || inStockRaw === "1");
@@ -699,7 +701,7 @@ function buildProductsFromSheet() {
     // the name (e.g. "Mera Necklace" -> "mera-necklace"). Type one only if you
     // want a fixed id (e.g. to keep cart links stable across edits).
     if (!id) id = slugify(name);
-    products.push({ id: id, category: category, name: name, price: price, mrp: mrp, image: image, description: description, inStock: inStock });
+    products.push({ id: id, category: category, name: name, price: price, mrp: mrp, image: image, images: images, description: description, inStock: inStock });
   }
   return products;
 }
