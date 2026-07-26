@@ -621,9 +621,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   z-index: 9999;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   height: 56px;
-  padding: 0 20px 0 16px;
+  padding: 0 18px;
   background: #25D366;
   border-radius: 40px;
   box-shadow: 0 8px 24px rgba(37, 211, 102, 0.40);
