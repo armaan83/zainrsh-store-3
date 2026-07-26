@@ -56,5 +56,16 @@
     "images": [],
     "description": "Trending",
     "inStock": true
+  },
+  {
+    "id": "ring",
+    "category": "",
+    "name": "Ring",
+    "price": 349,
+    "mrp": 487,
+    "image": "https://ibb.co/jPDGb7C1",
+    "images": [],
+    "description": "NewRIng",
+    "inStock": true
   }
 ]
