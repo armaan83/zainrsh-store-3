@@ -51,12 +51,7 @@ function loadCachedProducts() {
 
 function getProductsUrl() {
   const url = (window.CONFIG && CONFIG.PRODUCTS_JSON_URL) || "products.json";
-  // Cache-bust: GitHub Pages' CDN edge can serve a stale products.json even
-  // when the browser sends no-store. A fresh query string makes every request
-  // a unique URL the CDN can't serve from cache, so the store always shows the
-  // latest catalog after a sync — no manual hard-refresh needed.
-  const sep = url.indexOf("?") === -1 ? "?" : "&";
-  return url + sep + "_t=" + Date.now();
+  return url;
 }
 
 async function fetchProducts() {
