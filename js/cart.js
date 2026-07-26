@@ -40,11 +40,6 @@ function removeFromCart(productId) {
   renderCartDrawer();
 }
 
-function cartItemCount() {
-  const cart = getCart();
-  return Object.values(cart).reduce((sum, q) => sum + q, 0);
-}
-
 function cartLineItems() {
   const cart = getCart();
   // PRODUCTS comes from products.js, must be loaded before this file
@@ -55,6 +50,27 @@ function cartLineItems() {
       return { product, qty, lineTotal: product.price * qty };
     })
     .filter(Boolean);
+}
+
+function cartItemCount() {
+  // Count only items that still exist in the live catalog, so the badge
+  // matches the drawer (a removed product shouldn't show as "1" in the bag).
+  return cartLineItems().reduce((sum, item) => sum + item.qty, 0);
+}
+
+// Drop any cart entries whose product id no longer exists in the catalog
+// (e.g. a deleted/renamed product). Call this after PRODUCTS is loaded.
+function pruneOrphanCartItems() {
+  const cart = getCart();
+  const ids = Object.keys(cart);
+  let changed = false;
+  ids.forEach(id => {
+    if (!PRODUCTS.find(p => p.id === id)) {
+      delete cart[id];
+      changed = true;
+    }
+  });
+  if (changed) saveCart(cart); // updates the badge too
 }
 
 function cartSubtotal() {

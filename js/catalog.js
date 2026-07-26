@@ -108,6 +108,7 @@ function setActiveCategory(category) {
 document.addEventListener("DOMContentLoaded", async () => {
   await fetchProducts();      // load live catalog from the sheet
   buildCategoryButtons();     // make category tabs match the sheet
+  if (typeof pruneOrphanCartItems === "function") pruneOrphanCartItems(); // drop stale cart ids
   renderCatalog("All");       // show everything
 
   document.querySelectorAll(".chain-cat-btn").forEach(btn => {
