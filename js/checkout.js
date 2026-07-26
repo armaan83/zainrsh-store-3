@@ -1,13 +1,10 @@
 // Checkout flow:
-// 1. Render order summary from cart (recalculates if COD fee applies)
+// 1. Render order summary from cart
 // 2. Validate form
-// 3a. UPI: show a QR code + UPI deep link for the exact amount. Customer pays in their own
+// 3. UPI: show a QR code + UPI deep link for the exact amount. Customer pays in their own
 //     UPI app (outside this site entirely — there's no gateway involved). When they tap
 //     "I've paid," we log the order as pending manual verification and show the confirmation.
 //     You verify the payment yourself against your bank/UPI app notification before shipping.
-// 3b. COD: POST to Apps Script -> logs order directly as COD_PENDING -> straight to success.html
-
-const COD_FEE = 49;
 
 let pendingOrder = null; // { customer, items, total } — set once "Continue to payment" is clicked
 
@@ -31,9 +28,7 @@ function renderOrderSummary() {
 
   const subtotal = cartSubtotal();
   const shipping = subtotal >= 799 ? 0 : 59;
-  const isCod = selectedPaymentMethod() === "cod";
-  const codFee = isCod ? COD_FEE : 0;
-  const total = subtotal + shipping + codFee;
+  const total = subtotal + shipping;
 
   container.innerHTML = `
     ${items.map(({ product, qty, lineTotal }) => `
@@ -46,11 +41,6 @@ function renderOrderSummary() {
       <span>Shipping</span>
       <span>${shipping === 0 ? "Free" : "₹" + shipping}</span>
     </div>
-    ${isCod ? `
-    <div class="order-row">
-      <span>Cash on Delivery fee</span>
-      <span>₹${COD_FEE}</span>
-    </div>` : ""}
     <div class="order-row total">
       <span>Total</span>
       <span>₹${total}</span>
@@ -60,7 +50,7 @@ function renderOrderSummary() {
   document.getElementById("checkout-form").dataset.total = total;
 
   if (payBtn) {
-    payBtn.textContent = isCod ? "Place order" : "Continue to payment";
+    payBtn.textContent = "Continue to payment";
   }
 }
 
@@ -170,11 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
       id: product.id, name: product.name, price: product.price, qty
     }));
 
-    if (selectedPaymentMethod() === "cod") {
-      placeCodOrder(customer, items, total);
-    } else {
-      showUpiPaymentPanel(customer, items, total);
-    }
+    showUpiPaymentPanel(customer, items, total);
   });
 
   const confirmBtn = document.getElementById("confirm-paid-btn");
@@ -188,34 +174,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-async function placeCodOrder(customer, items, total) {
-  const payBtn = document.getElementById("pay-btn");
-  payBtn.disabled = true;
-  payBtn.textContent = "Placing order…";
-
-  try {
-    const res = await fetch(CONFIG.APPS_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "createCodOrder",
-        customer,
-        items,
-        total
-      })
-    });
-    const data = await res.json();
-
-    if (!data.success) {
-      throw new Error(data.error || "Could not place order");
-    }
-
-    localStorage.removeItem(CART_KEY);
-    window.location.href = "success.html?order=" + encodeURIComponent(data.merchantOrderId) + "&method=cod";
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong placing your order. Please try again, or check that the store's backend is configured correctly.");
-    payBtn.disabled = false;
-    payBtn.textContent = "Place order";
-  }
-}
