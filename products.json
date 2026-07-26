@@ -22,7 +22,7 @@
       "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg"
     ],
     "description": "Top Necklace",
-    "inStock": false
+    "inStock": true
   },
   {
     "id": "3",
@@ -55,7 +55,7 @@
     "image": "https://i.postimg.cc/nrMn7hKZ/Screenshot-2026-07-25-at-12-59-24-PM.png",
     "images": [],
     "description": "Trending",
-    "inStock": true
+    "inStock": false
   },
   {
     "id": "ring",
@@ -66,6 +66,6 @@
     "image": "https://iili.io/Ck9xLXV.png",
     "images": [],
     "description": "NewRIng",
-    "inStock": true
+    "inStock": false
   }
 ]
