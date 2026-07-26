@@ -759,6 +759,32 @@ function onEdit(e) {
   } catch (err) { console.error("onEdit sync failed: " + err.message); }
 }
 
+// Run this ONCE from the Apps Script editor (Run ▸ installEditTrigger) to make
+// the store auto-sync whenever you edit the Products sheet. Without an installed
+// trigger, onEdit never fires on its own — you'd have to manually hit "sync".
+// Safe to run repeatedly: it removes any old onEdit trigger first, so no dupes.
+function installEditTrigger() {
+  // Resolve the spreadsheet: prefer the one this script is bound to, else SHEET_ID.
+  let ss = null;
+  try { ss = SpreadsheetApp.getActiveSpreadsheet(); } catch (e) { ss = null; }
+  if (!ss) {
+    const sid = getScriptProp("SHEET_ID", "");
+    if (sid && sid.indexOf("PASTE") === -1) ss = SpreadsheetApp.openById(sid);
+  }
+  if (!ss) {
+    Logger.log("ERROR: could not resolve the Products spreadsheet. Open this script FROM the sheet (Tools ▸ Script editor) or set the SHEET_ID Script Property, then run again.");
+    return;
+  }
+
+  // Remove any existing onEdit triggers to avoid duplicates.
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === "onEdit") ScriptApp.deleteTrigger(t);
+  });
+
+  ScriptApp.newTrigger("onEdit").forSpreadsheet(ss).onEdit().create();
+  Logger.log("✅ Installed onEdit trigger on spreadsheet: " + ss.getName());
+}
+
 // Read the Products sheet and build the products.json array.
 function buildProductsFromSheet() {
   const sheet = getProductsSheet();
