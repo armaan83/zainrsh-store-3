@@ -84,7 +84,7 @@ function showUpiPaymentPanel(customer, items, total) {
   const orderRef = "ZRUPI" + Date.now();
   pendingOrder.orderRef = orderRef;
 
-  const upiUri = buildUpiUri(total, "Zainrsh Order " + orderRef);
+  const upiUri = buildUpiUri(total, "Zainrash Order " + orderRef);
 
   document.getElementById("upi-amount-text").textContent = "₹" + total;
   document.getElementById("upi-id-value").textContent = CONFIG.UPI_ID;

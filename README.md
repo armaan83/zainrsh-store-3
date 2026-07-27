@@ -1,4 +1,4 @@
-# Zainrsh Accessories — Storefront
+# Zainrash Accessories — Storefront
 
 A static jewelry storefront built to run free on GitHub Pages. Checkout offers two payment
 methods, neither of which requires a payment gateway business account:
@@ -83,7 +83,7 @@ Open `js/config.js` and fill in:
 
 ```js
 UPI_ID: "yourname@oksbi",                 // from Step 2
-UPI_PAYEE_NAME: "Zainrsh Accessories",     // shown to customers in their UPI app
+UPI_PAYEE_NAME: "Zainrash Accessories",     // shown to customers in their UPI app
 APPS_SCRIPT_URL: "https://script.google.com/macros/s/.../exec",  // from Step 3
 ```
 

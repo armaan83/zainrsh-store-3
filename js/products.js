@@ -24,11 +24,11 @@ let PRODUCTS = PRODUCTS_FALLBACK.slice();
 // Load any cached catalog immediately so the cart works even before the live
 // fetch completes (cart.js reads PRODUCTS synchronously on its own load).
 try {
-  const c = JSON.parse(localStorage.getItem("zainrsh_products_cache_v1"));
+  const c = JSON.parse(localStorage.getItem("zainrash_products_cache_v1"));
   if (Array.isArray(c) && c.length) PRODUCTS = c;
 } catch (e) { /* ignore */ }
 
-const PRODUCTS_CACHE_KEY = "zainrsh_products_cache_v1";
+const PRODUCTS_CACHE_KEY = "zainrash_products_cache_v1";
 
 // Resolve a possibly-repo-relative image path to an absolute URL using the site origin.
 function resolveImageUrl(img) {

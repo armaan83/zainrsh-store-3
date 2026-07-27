@@ -1,4 +1,4 @@
-# Zainrsh Catalog — Easy Upload via Google Sheet
+# Zainrash Catalog — Easy Upload via Google Sheet
 
 The Telegram bot is unreliable (Apps Script /exec 302-redirects every POST, which
 Telegram refuses to follow). The dependable way to add products is a Google Sheet
@@ -19,7 +19,7 @@ that syncs straight to the store's products.json on GitHub.
 2. Extensions → Apps Script.
 3. Replace the boilerplate with the contents of Code.gs (in this repo).
 4. Save (Ctrl/Cmd+S). Reload the Sheet.
-5. A "Zainrsh Catalog" menu appears → click **Sync → Site**.
+5. A "Zainrash Catalog" menu appears → click **Sync → Site**.
    (It also auto-syncs ~15s after any edit.)
 
 ## Verify

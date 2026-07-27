@@ -9,7 +9,7 @@ const CONFIG = {
   UPI_ID: "8511932631@ybl",
 
   // The name that should show up when customers scan the QR / open their UPI app to pay.
-  UPI_PAYEE_NAME: "Zainrsh Accessories",
+  UPI_PAYEE_NAME: "Zainrash Accessories",
 
   // Orders/checkout go through the Apps Script Web App (still used for the Sheet + orders).
   // Looks like: https://script.google.com/macros/s/AKfycb.../exec
@@ -24,7 +24,7 @@ const CONFIG = {
   WHATSAPP_NUMBER: "916355224464",
 
   // Optional pre-filled message shown when a customer opens the WhatsApp chat.
-  WHATSAPP_MESSAGE: "Hi Zainrsh! I have a question about my order.",
+  WHATSAPP_MESSAGE: "Hi Zainrash! I have a question about my order.",
 
-  STORE_NAME: "Zainrsh Accessories",
+  STORE_NAME: "Zainrash Accessories",
 };

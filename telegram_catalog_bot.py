@@ -146,7 +146,7 @@ def _gh(method, url, token, data=None):
     req = urllib.request.Request(url, method=method)
     req.add_header("Authorization", "token " + token)
     req.add_header("Accept", "application/vnd.github+json")
-    req.add_header("User-Agent", "zainrsh-bot")
+    req.add_header("User-Agent", "zainrash-bot")
     if data is not None:
         req.add_header("Content-Type", "application/json")
         req.data = json.dumps(data).encode()

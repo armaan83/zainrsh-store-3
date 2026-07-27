@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Status — Zainrsh Accessories</title>
+<title>Order Status — Zainrash Accessories</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
@@ -32,8 +32,8 @@
   const el = document.getElementById("status-content");
 
   function renderConfirmed(orderId) {
-    localStorage.removeItem("zainrsh_cart_v1");
-    localStorage.removeItem("zainrsh_pending_order");
+    localStorage.removeItem("zainrash_cart_v1");
+    localStorage.removeItem("zainrash_pending_order");
     el.innerHTML = `
       <div class="eyebrow" style="color:#1F3D2E;">Order confirmed</div>
       <h1>Thank you for your order</h1>
@@ -58,7 +58,7 @@
   }
 
   function renderUpiConfirmed(orderId, logFailed) {
-    localStorage.removeItem("zainrsh_cart_v1");
+    localStorage.removeItem("zainrash_cart_v1");
     el.innerHTML = `
       <div class="eyebrow" style="color:#1F3D2E;">Thank you</div>
       <h1>Thanks for your order — we are preparing your order now</h1>

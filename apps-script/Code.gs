@@ -1,5 +1,5 @@
 /**
- * Zainrsh Accessories — Telegram -> GitHub Pages catalog backend (webhook mode)
+ * Zainrash Accessories — Telegram -> GitHub Pages catalog backend (webhook mode)
  *
  * WHAT THIS SCRIPT DOES (the only thing it needs to do for the catalog):
  *   You send a photo + caption to your Telegram bot.
@@ -258,7 +258,7 @@ function doGet(e) {
       diag_draft: (function () { try { return JSON.parse(sp.getProperty("draft_1465849687") || "null"); } catch (e) { return "ERR"; } })(),
       diag_last_reply: sp.getProperty("lastError_1465849687") || null,
       products_count: (function () { try { return getProductsJson().products.length; } catch (e) { return "ERR:" + e.message; } })(),
-      message: "Zainrsh catalog webhook is live."
+      message: "Zainrash catalog webhook is live."
     });
   }
   // Isolated GitHub-write test: proves whether appendProductToJson actually works.
@@ -278,7 +278,7 @@ function doGet(e) {
     const result = syncProductsToSite();
     return jsonOut({ ok: !/❌/.test(result || ""), result: result });
   }
-  return jsonOut({ ok: true, message: "Zainrsh catalog webhook is live." });
+  return jsonOut({ ok: true, message: "Zainrash catalog webhook is live." });
 }
 
 // ---------------------------------------------------------------------------
@@ -739,7 +739,7 @@ function continueDraft(chatId) {
 
 // Menu shown when the Sheet is opened.
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu("Zainrsh Catalog")
+  SpreadsheetApp.getUi().createMenu("Zainrash Catalog")
     .addItem("Sync -> Site", "syncProductsToSite")
     .addItem("Count rows in sheet", "countSheetRows")
     .addToUi();

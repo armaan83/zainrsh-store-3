@@ -1,7 +1,7 @@
 // Cart state — persisted to localStorage so it survives across pages/reloads.
 // Cart shape: { "product-id": quantity, ... }
 
-const CART_KEY = "zainrsh_cart_v1";
+const CART_KEY = "zainrash_cart_v1";
 
 function getCart() {
   try {
