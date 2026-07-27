@@ -105,7 +105,7 @@ function renderOrderSummary() {
       <span>−₹${discount}</span>
     </div>` : ""}
     <div class="order-row">
-      <span>Shipping</span>
+      <span>Shipping <span style="font-size:0.78rem; font-weight:500; color:rgba(26,20,17,0.5);">Free shipping</span></span>
       <span>₹${shipping}</span>
     </div>
     <div class="order-row total">
