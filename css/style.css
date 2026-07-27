@@ -76,8 +76,15 @@ img { max-width: 100%; display: block; }
 .brand {
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
-  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
 }
+.brand-logo {
+  height: 44px;
+  width: auto;
+  display: block;
+}
+.brand span { color: var(--gold); }
 
 .brand span { color: var(--gold); }
 
@@ -393,6 +400,7 @@ img { max-width: 100%; display: block; }
   text-align: center;
 }
 .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 8px; }
+.footer-logo { height: 72px; width: auto; margin: 0 auto 8px; display: block; }
 .footer-note { font-size: 0.8rem; color: rgba(26,20,17,0.5); }
 .footer-links { display: flex; gap: 20px; justify-content: center; margin: 18px 0; font-size: 0.8rem; }
 
