@@ -55,7 +55,7 @@ DEFAULT_CONFIG = {
     "github_branch": "main",
     "images_path": "images",        # folder in the repo where product photos go
     "products_file": "products.json",
-    "site_url": "https://zainrash.com/"
+    "site_url": "https://armaan83.github.io/zainrsh-store-3/"
 }
 
 
