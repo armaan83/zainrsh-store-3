@@ -85,7 +85,7 @@ function renderOrderSummary() {
 
   const subtotal = cartSubtotal();
   const discount = computeDiscount(subtotal);
-  const shipping = (subtotal - discount) >= 799 ? 0 : 59;
+  const shipping = 0;
   const total = subtotal - discount + shipping;
 
   container.innerHTML = `
@@ -106,7 +106,7 @@ function renderOrderSummary() {
     </div>` : ""}
     <div class="order-row">
       <span>Shipping</span>
-      <span>${shipping === 0 ? "Free" : "₹" + shipping}</span>
+      <span>₹${shipping}</span>
     </div>
     <div class="order-row total">
       <span>Total</span>
