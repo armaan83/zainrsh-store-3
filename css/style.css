@@ -407,8 +407,8 @@ img { max-width: 100%; display: block; }
 }
 .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 8px; }
 .footer-logo { height: 78px; width: 78px; object-fit: contain; border-radius: 50%; border: 5px solid #000; box-sizing: border-box; margin: 0 auto 12px; display: block; }
-.footer-note { font-size: 0.8rem; color: rgba(26,20,17,0.5); }
-.footer-links { display: flex; gap: 20px; justify-content: center; margin: 18px 0; font-size: 0.8rem; }
+.footer-note { font-size: 1rem; color: rgba(26,20,17,0.72); line-height: 1.6; }
+.footer-links { display: flex; gap: 24px; justify-content: center; margin: 20px 0; font-size: 1rem; }
 
 /* ===== Checkout page ===== */
 .checkout-wrap { max-width: 640px; margin: 0 auto; padding: 60px 24px 100px; }
