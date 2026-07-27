@@ -330,7 +330,7 @@ function handleProduct(product) {
     return "❌ Could not save product: " + err.message;
   }
 
-  const site = getScriptProp("SITE_URL", "https://armaan83.github.io/zainrsh-store-3/");
+  const site = getScriptProp("SITE_URL", "https://zainrash.com/");
   return "✅ Added: *" + product.name + "* (" + product.category + ") — ₹" + product.price +
     (wroteToSheet ? "  (via Sheet)" : "") +
     "\n🌐 Live at " + site + "\n(GitHub Pages refreshes in ~1 min — just reload the site.)";
