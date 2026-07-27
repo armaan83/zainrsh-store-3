@@ -76,6 +76,7 @@ function doPost(e) {
     try {
       if (payload.action === "createManualUpiOrder") return jsonOut(createManualUpiOrder(payload));
       if (payload.action === "createCodOrder") return jsonOut(createCodOrder(payload));
+      if (payload.action === "getPromoCodes") return jsonOut(getPromoCodes());
       return jsonOut({ ok: false, error: "unknown action: " + payload.action });
     } catch (err) {
       return jsonOut({ ok: false, error: String(err && err.message ? err.message : err) });
@@ -614,6 +615,50 @@ function getProductsSheet() {
     s.appendRow(["id", "category", "name", "price", "mrp", "image", "description", "inStock"]);
   }
   return s;
+}
+
+// ---------------------------------------------------------------------------
+// Influencer / promo codes — managed from a "PromoCodes" tab in this sheet.
+// Columns: code | type | value | influencer | active
+//   type  : "percent" (value = % off subtotal) or "flat" (value = ₹ off)
+//   value : number
+//   active: anything except no/false/0 means active
+// The PromoCodes tab is created automatically (with sample rows) on first call.
+// ---------------------------------------------------------------------------
+function getPromoSheet() {
+  const ss = activeOrConfiguredSs();
+  let s = ss.getSheetByName("PromoCodes");
+  if (!s) {
+    s = ss.insertSheet("PromoCodes");
+    s.appendRow(["code", "type", "value", "influencer", "active"]);
+    s.appendRow(["RAJ10", "percent", 10, "Raj", "yes"]);
+    s.appendRow(["NEHA50", "flat", 50, "Neha", "yes"]);
+    s.appendRow(["MIRA15", "percent", 15, "Mira", "yes"]);
+  }
+  return s;
+}
+
+function getPromoCodes() {
+  try {
+    const sheet = getPromoSheet();
+    const data = sheet.getDataRange().getValues();
+    if (data.length < 2) return { ok: true, codes: {} };
+    const codes = {};
+    for (let row = 1; row < data.length; row++) {
+      const code = (data[row][0] || "").toString().trim().toUpperCase();
+      if (!code) continue;
+      const type = (data[row][1] || "percent").toString().trim().toLowerCase();
+      const value = Number(data[row][2]);
+      if (!isFinite(value)) continue;
+      const influencer = (data[row][3] || "").toString().trim();
+      const active = (data[row][4] || "").toString().trim().toLowerCase();
+      if (active === "no" || active === "false" || active === "0") continue;
+      codes[code] = { type: type === "flat" ? "flat" : "percent", value: value, influencer: influencer };
+    }
+    return { ok: true, codes: codes };
+  } catch (err) {
+    return { ok: false, error: String(err && err.message ? err.message : err), codes: {} };
+  }
 }
 
 function logOrder(merchantOrderId, customer, items, total, status, paymentMode) {

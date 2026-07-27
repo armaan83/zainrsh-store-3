@@ -29,10 +29,13 @@ const CONFIG = {
   STORE_NAME: "Zainrash Accessories",
 
   // ===== INFLUENCER / PROMO CODES =====
-  // Add or edit codes here anytime (just push the site — no backend redeploy).
-  // type "percent" -> value is % off the subtotal (e.g. 10 = 10% off)
-  // type "flat"    -> value is a fixed ₹ amount off (e.g. 50 = ₹50 off)
-  // influencer     -> name shown to the customer + recorded in the order ID for tracking
+  // FALLBACK ONLY. The live list is now managed from the "PromoCodes" tab in your
+  // Google Sheet (created automatically on first use). Edit the sheet to add/change
+  // codes — no redeploy needed for sheet edits. This block is used only if the sheet
+  // fetch fails (e.g. offline). Keep it in sync if you want a safety net.
+  //   type "percent" -> value is % off the subtotal (e.g. 10 = 10% off)
+  //   type "flat"    -> value is a fixed ₹ amount off (e.g. 50 = ₹50 off)
+  //   influencer     -> name shown to the customer + recorded in the order ID for tracking
   PROMO_CODES: {
     "RAJ10":  { type: "percent", value: 10, influencer: "Raj" },
     "NEHA50": { type: "flat",    value: 50, influencer: "Neha" },

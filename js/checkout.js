@@ -8,6 +8,28 @@
 
 let pendingOrder = null; // { customer, items, total } — set once "Continue to payment" is clicked
 let appliedPromo = null; // { code, type, value, influencer, discount }
+let livePromoCodes = null; // fetched from the sheet via Apps Script (falls back to CONFIG.PROMO_CODES)
+
+function getPromoCodes() {
+  return (livePromoCodes && Object.keys(livePromoCodes).length) ? livePromoCodes : (CONFIG.PROMO_CODES || {});
+}
+
+function fetchPromoCodes() {
+  if (!CONFIG.APPS_SCRIPT_URL) return;
+  try {
+    fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ action: "getPromoCodes" })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && data.ok && data.codes && Object.keys(data.codes).length) {
+          livePromoCodes = data.codes;
+        }
+      })
+      .catch(function () { /* keep using CONFIG.PROMO_CODES fallback */ });
+  } catch (e) { /* ignore — fallback stays */ }
+}
 
 function computeDiscount(subtotal) {
   if (!appliedPromo) return 0;
@@ -29,17 +51,18 @@ function applyPromoCode() {
     msg.className = "promo-msg err";
     return;
   }
-  const code = CONFIG.PROMO_CODES && CONFIG.PROMO_CODES[raw];
-  if (!code) {
+  const codes = getPromoCodes();
+  const entry = codes && codes[raw];
+  if (!entry) {
     appliedPromo = null;
     msg.textContent = "That code isn't valid.";
     msg.className = "promo-msg err";
     renderOrderSummary();
     return;
   }
-  appliedPromo = Object.assign({ code: raw }, code);
-  const desc = code.type === "percent" ? code.value + "% off" : "₹" + code.value + " off";
-  msg.textContent = "✓ " + desc + " applied" + (code.influencer ? " — thanks " + code.influencer + "!" : "") + " (code locked for this order)";
+  appliedPromo = Object.assign({ code: raw }, entry);
+  const desc = entry.type === "percent" ? entry.value + "% off" : "₹" + entry.value + " off";
+  msg.textContent = "✓ " + desc + " applied" + (entry.influencer ? " — thanks " + entry.influencer + "!" : "") + " (code locked for this order)";
   msg.className = "promo-msg ok";
   input.disabled = true;
   const btn = document.getElementById("promo-apply-btn");
@@ -182,6 +205,7 @@ async function confirmUpiPaid() {
 
 document.addEventListener("DOMContentLoaded", () => {
   renderOrderSummary();
+  fetchPromoCodes(); // load live codes from the PromoCodes sheet (falls back to config.js)
 
   document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
     radio.addEventListener("change", renderOrderSummary);
