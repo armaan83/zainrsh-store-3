@@ -659,3 +659,60 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 @media (prefers-reduced-motion: reduce) {
   .wa-float { animation: none; }
 }
+
+/* ===== Promo code box ===== */
+.promo-box {
+  margin: 18px 0 6px;
+  padding: 16px 18px;
+  border: 1px dashed var(--gold-light);
+  border-radius: 12px;
+  background: rgba(184,147,90,0.06);
+}
+.promo-box label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.promo-row {
+  display: flex;
+  gap: 8px;
+}
+.promo-row input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid rgba(26,20,17,0.18);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.promo-row input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.promo-row .btn-ghost {
+  padding: 10px 18px;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gold);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.promo-row .btn-ghost:hover {
+  background: var(--gold);
+  color: #fff;
+}
+.promo-msg {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  min-height: 1em;
+}
+.promo-msg.ok { color: #1F3D2E; font-weight: 600; }
+.promo-msg.err { color: #8C3B4A; }
+
+.order-row.discount span:last-child { color: #1F3D2E; font-weight: 600; }
+

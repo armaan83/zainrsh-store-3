@@ -7,10 +7,44 @@
 //     You verify the payment yourself against your bank/UPI app notification before shipping.
 
 let pendingOrder = null; // { customer, items, total } — set once "Continue to payment" is clicked
+let appliedPromo = null; // { code, type, value, influencer, discount }
 
-function selectedPaymentMethod() {
-  const checked = document.querySelector('input[name="paymentMethod"]:checked');
-  return checked ? checked.value : "upi";
+function computeDiscount(subtotal) {
+  if (!appliedPromo) return 0;
+  if (appliedPromo.type === "percent") {
+    return Math.round(subtotal * (appliedPromo.value / 100));
+  }
+  if (appliedPromo.type === "flat") {
+    return Math.min(appliedPromo.value, subtotal);
+  }
+  return 0;
+}
+
+function applyPromoCode() {
+  const input = document.getElementById("promo-code");
+  const msg = document.getElementById("promo-msg");
+  const raw = (input.value || "").trim().toUpperCase();
+  if (!raw) {
+    msg.textContent = "Please enter a code.";
+    msg.className = "promo-msg err";
+    return;
+  }
+  const code = CONFIG.PROMO_CODES && CONFIG.PROMO_CODES[raw];
+  if (!code) {
+    appliedPromo = null;
+    msg.textContent = "That code isn't valid.";
+    msg.className = "promo-msg err";
+    renderOrderSummary();
+    return;
+  }
+  appliedPromo = Object.assign({ code: raw }, code);
+  const desc = code.type === "percent" ? code.value + "% off" : "₹" + code.value + " off";
+  msg.textContent = "✓ " + desc + " applied" + (code.influencer ? " — thanks " + code.influencer + "!" : "") + " (code locked for this order)";
+  msg.className = "promo-msg ok";
+  input.disabled = true;
+  const btn = document.getElementById("promo-apply-btn");
+  if (btn) btn.disabled = true;
+  renderOrderSummary();
 }
 
 function renderOrderSummary() {
@@ -27,8 +61,9 @@ function renderOrderSummary() {
   }
 
   const subtotal = cartSubtotal();
-  const shipping = subtotal >= 799 ? 0 : 59;
-  const total = subtotal + shipping;
+  const discount = computeDiscount(subtotal);
+  const shipping = (subtotal - discount) >= 799 ? 0 : 59;
+  const total = subtotal - discount + shipping;
 
   container.innerHTML = `
     ${items.map(({ product, qty, lineTotal }) => `
@@ -37,6 +72,15 @@ function renderOrderSummary() {
         <span>₹${lineTotal}</span>
       </div>
     `).join("")}
+    <div class="order-row">
+      <span>Subtotal</span>
+      <span>₹${subtotal}</span>
+    </div>
+    ${discount > 0 ? `
+    <div class="order-row discount">
+      <span>Discount${appliedPromo.influencer ? " (" + appliedPromo.influencer + ")" : ""}</span>
+      <span>−₹${discount}</span>
+    </div>` : ""}
     <div class="order-row">
       <span>Shipping</span>
       <span>${shipping === 0 ? "Free" : "₹" + shipping}</span>
@@ -48,6 +92,7 @@ function renderOrderSummary() {
   `;
 
   document.getElementById("checkout-form").dataset.total = total;
+  document.getElementById("checkout-form").dataset.discount = discount;
 
   if (payBtn) {
     payBtn.textContent = "Continue to payment";
@@ -81,8 +126,10 @@ function buildUpiUri(amount, note) {
 function showUpiPaymentPanel(customer, items, total) {
   pendingOrder = { customer, items, total };
 
-  const orderRef = "ZRUPI" + Date.now();
+  const promoTag = appliedPromo ? "-" + appliedPromo.code : "";
+  const orderRef = "ZRUPI" + promoTag + Date.now();
   pendingOrder.orderRef = orderRef;
+  pendingOrder.promo = appliedPromo ? appliedPromo.code : "";
 
   const upiUri = buildUpiUri(total, "Zainrash Order " + orderRef);
 
@@ -112,7 +159,9 @@ async function confirmUpiPaid() {
         orderRef: pendingOrder.orderRef,
         customer: pendingOrder.customer,
         items: pendingOrder.items,
-        total: pendingOrder.total
+        total: pendingOrder.total,
+        promo: pendingOrder.promo || "",
+        discount: Number(document.getElementById("checkout-form").dataset.discount || 0)
       })
     });
     const data = await res.json();
@@ -122,7 +171,7 @@ async function confirmUpiPaid() {
     }
 
     localStorage.removeItem(CART_KEY);
-    window.location.href = "success.html?order=" + encodeURIComponent(pendingOrder.orderRef) + "&method=upi";
+    window.location.href = "success.html?order=" + encodeURIComponent(pendingOrder.orderRef) + "&method=upi&promo=" + encodeURIComponent(pendingOrder.promo || "");
   } catch (err) {
     console.error(err);
     // Even if logging failed, the customer already paid — don't leave them stuck on a dead
@@ -136,6 +185,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
     radio.addEventListener("change", renderOrderSummary);
+  });
+
+  const promoBtn = document.getElementById("promo-apply-btn");
+  if (promoBtn) promoBtn.addEventListener("click", applyPromoCode);
+  const promoInput = document.getElementById("promo-code");
+  if (promoInput) promoInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); applyPromoCode(); }
   });
 
   const form = document.getElementById("checkout-form");

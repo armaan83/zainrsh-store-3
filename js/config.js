@@ -27,4 +27,15 @@ const CONFIG = {
   WHATSAPP_MESSAGE: "Hi Zainrash! I have a question about my order.",
 
   STORE_NAME: "Zainrash Accessories",
+
+  // ===== INFLUENCER / PROMO CODES =====
+  // Add or edit codes here anytime (just push the site — no backend redeploy).
+  // type "percent" -> value is % off the subtotal (e.g. 10 = 10% off)
+  // type "flat"    -> value is a fixed ₹ amount off (e.g. 50 = ₹50 off)
+  // influencer     -> name shown to the customer + recorded in the order ID for tracking
+  PROMO_CODES: {
+    "RAJ10":  { type: "percent", value: 10, influencer: "Raj" },
+    "NEHA50": { type: "flat",    value: 50, influencer: "Neha" },
+    "MIRA15": { type: "percent", value: 15, influencer: "Mira" }
+  },
 };

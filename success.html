@@ -29,7 +29,14 @@
   const params = new URLSearchParams(window.location.search);
   const merchantOrderId = params.get("order");
   const method = params.get("method");
+  const promoParam = params.get("promo");
   const el = document.getElementById("status-content");
+
+  function promoLine() {
+    return promoParam
+      ? `<p style="font-size:0.8rem; color:#1F3D2E; margin-bottom:28px;">Promo applied: ${promoParam}</p>`
+      : "";
+  }
 
   function renderConfirmed(orderId) {
     localStorage.removeItem("zainrash_cart_v1");
@@ -65,7 +72,8 @@
       <p style="max-width:440px; margin: 0 auto 12px; color: rgba(26,20,17,0.65);">
         We'll confirm your UPI payment shortly and get your order packed and shipped.
       </p>
-      <p style="font-size:0.85rem; color: rgba(26,20,17,0.5); margin-bottom:28px;">Order reference: ${orderId}</p>
+      <p style="font-size:0.85rem; color: rgba(26,20,17,0.5); margin-bottom:8px;">Order reference: ${orderId}</p>
+      ${promoLine()}
       <a href="index.html" class="btn-primary">Continue shopping</a>
     `;
   }
