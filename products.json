@@ -67,5 +67,71 @@
     "images": [],
     "description": "NewRIng",
     "inStock": false
+  },
+  {
+    "id": "32598",
+    "category": "Earrings",
+    "name": "Silver Jhumka Earrings",
+    "price": 599,
+    "mrp": 899,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
+    "description": "Handcrafted silver jhumkas with oxidized finish",
+    "inStock": true
+  },
+  {
+    "id": "32598",
+    "category": "Necklace",
+    "name": "Kundan Choker",
+    "price": 1299,
+    "mrp": 1799,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
+    "description": "Traditional Kundan work choker necklace",
+    "inStock": true
+  },
+  {
+    "id": "32598",
+    "category": "Bracelet",
+    "name": "Beaded Bracelet",
+    "price": 299,
+    "mrp": 449,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
+    "description": "Colorful bead bracelet with charm",
+    "inStock": true
+  },
+  {
+    "id": "32598",
+    "category": "Ring",
+    "name": "Cocktail Ring",
+    "price": 449,
+    "mrp": 699,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
+    "description": "Statement cocktail ring with cubic zirconia",
+    "inStock": true
+  },
+  {
+    "id": "32598",
+    "category": "Anklet",
+    "name": "Temple Anklet",
+    "price": 349,
+    "mrp": 499,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
+    "description": "Traditional temple style anklet",
+    "inStock": true
+  },
+  {
+    "id": "32598",
+    "category": "Other",
+    "name": "Maang Tikka Set",
+    "price": 799,
+    "mrp": 1199,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
+    "description": "Complete maang tikka set with matching earrings",
+    "inStock": true
   }
 ]
