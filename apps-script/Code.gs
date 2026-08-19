@@ -1,5 +1,5 @@
 /**
- * Zainrash Accessories — Telegram -> GitHub Pages catalog backend (webhook mode)
+ * Zainrsh Accessories — Telegram -> GitHub Pages catalog backend (webhook mode)
  *
  * WHAT THIS SCRIPT DOES (the only thing it needs to do for the catalog):
  *   You send a photo + caption to your Telegram bot.
@@ -49,6 +49,23 @@ const QUESTION = {
   description: "📝 *Step 5/5 — Description (optional)*\nShort description? Type /skip to leave blank."
 };
 
+// Predefined categories shown as inline buttons during product-add flow.
+// Stored in ScriptProperties (CATALOG_CATEGORIES) so the owner can add more
+// at runtime — both via the "➕ Add New Category" button in the bot itself
+// and via /addcat <name>.  New categories persist across deploys.
+function getCatalogCategories() {
+  const sp = PropertiesService.getScriptProperties();
+  const raw = sp.getProperty("CATALOG_CATEGORIES");
+  if (raw) {
+    try { return JSON.parse(raw); } catch (e) {}
+  }
+  // sensible defaults
+  return ["Earrings", "Necklace", "Bracelet", "Ring", "Anklet", "Other"];
+}
+function saveCatalogCategories(cats) {
+  PropertiesService.getScriptProperties().setProperty("CATALOG_CATEGORIES", JSON.stringify(cats));
+}
+
 function getScriptProp(k, fallback) {
   const v = PropertiesService.getScriptProperties().getProperty(k);
   return (v && v.indexOf("PASTE") === -1) ? v : (fallback || "");
@@ -56,6 +73,79 @@ function getScriptProp(k, fallback) {
 
 function getGithubToken() { return getScriptProp("GITHUB_TOKEN", ""); }
 function getBotToken() { return getScriptProp("TELEGRAM_BOT_TOKEN", ""); }
+
+// ---------------------------------------------------------------------------
+// Callback query handler (inline keyboard button taps)
+// ---------------------------------------------------------------------------
+function handleCallbackQuery(cb) {
+  const chatId = String(cb.message.chat.id);
+  const data = cb.data || "";
+  const msgId = cb.message.message_id;
+  const ownerId = getScriptProp("OWNER_CHAT_ID", "");
+  
+  // Only owner can add products
+  if (ownerId && chatId !== ownerId) {
+    tgAnswerCallback(cb.id, "🚫 Unauthorized.");
+    return jsonOut({ ok: true });
+  }
+  
+  const draft = getDraft(chatId);
+  if (!draft) {
+    tgAnswerCallback(cb.id, "❌ No active draft. Send a photo to start.");
+    return jsonOut({ ok: true });
+  }
+  
+  if (!draft.waitingForCategory) {
+    tgAnswerCallback(cb.id, "Not expecting category selection right now.");
+    return jsonOut({ ok: true });
+  }
+  
+  if (data.startsWith("cat:")) {
+    const choice = data.slice(4);
+    
+    if (choice === "__ADD_NEW__") {
+      // User wants to add a custom category
+      tgAnswerCallback(cb.id, "Type the new category name:");
+      // Update message to show instruction
+      tgEditMessage(chatId, msgId, "📝 *Step 2/5 — Category*\nType your new category name:");
+      // Track that we're waiting for custom category text
+      draft.waitingForCategory = false;
+      draft.waitingForCustomCategory = true;
+      setDraft(chatId, draft);
+    } else {
+      // Predefined category selected
+      draft.fields.category = choice;
+      draft.waitingForCategory = false;
+      setDraft(chatId, draft);
+      tgAnswerCallback(cb.id, "✅ Category: " + choice);
+      // Update message to show selected category
+      tgEditMessage(chatId, msgId, "📝 *Step 2/5 — Category*\n✅ Selected: *" + choice + "*", "Markdown");
+      // Continue to next field
+      continueDraft(chatId);
+    }
+  }
+  
+  return jsonOut({ ok: true });
+}
+
+// Telegram helper: answer callback query (removes loading spinner)
+function tgAnswerCallback(callbackQueryId, text) {
+  const token = getBotToken();
+  if (!token) return;
+  const url = "https://api.telegram.org/bot" + token + "/answerCallbackQuery";
+  const payload = { callback_query_id: callbackQueryId, text: text, show_alert: false };
+  UrlFetchApp.fetch(url, { method: "post", contentType: "application/json", payload: JSON.stringify(payload), muteHttpExceptions: true });
+}
+
+// Telegram helper: edit message (replace inline keyboard with confirmation)
+function tgEditMessage(chatId, messageId, text, parseMode) {
+  const token = getBotToken();
+  if (!token) return;
+  const url = "https://api.telegram.org/bot" + token + "/editMessageText";
+  const payload = { chat_id: String(chatId), message_id: messageId, text: text };
+  if (parseMode) payload.parse_mode = parseMode;
+  UrlFetchApp.fetch(url, { method: "post", contentType: "application/json", payload: JSON.stringify(payload), muteHttpExceptions: true });
+}
 
 // ---------------------------------------------------------------------------
 // Telegram webhook entry point
@@ -76,7 +166,6 @@ function doPost(e) {
     try {
       if (payload.action === "createManualUpiOrder") return jsonOut(createManualUpiOrder(payload));
       if (payload.action === "createCodOrder") return jsonOut(createCodOrder(payload));
-      if (payload.action === "getPromoCodes") return jsonOut(getPromoCodes());
       return jsonOut({ ok: false, error: "unknown action: " + payload.action });
     } catch (err) {
       return jsonOut({ ok: false, error: String(err && err.message ? err.message : err) });
@@ -84,6 +173,13 @@ function doPost(e) {
   }
 
   const update = payload;
+
+  // --- Handle callback queries (inline keyboard button taps) ---
+  // This MUST come before message handling, because callback_query is a different
+  // update type (not a message) and doesn't have update.message
+  if (update.callback_query) {
+    return handleCallbackQuery(update.callback_query);
+  }
 
   // Dedupe: Telegram retries webhook delivery on slow responses (Apps Script
   // cold starts), which causes the same update to be processed 2-3x. Ignore
@@ -127,7 +223,7 @@ function doPost(e) {
     const cmd = text.split(" ")[0].toLowerCase();
     const arg = text.slice(cmd.length).trim();
     if (cmd === "/start" || cmd === "/help") {
-      tgSend(chatId, "To add a product, just send a *photo* — I'll ask for Name, Category, Price, MRP and Description one by one.\n\nOr send photo + caption with all fields at once:\nName: Meera Jhumka\nCategory: Earrings\nPrice: 449\nMRP: 699\nDescription: antique gold jhumka\n\nCommands:\n/list  /delete <id>  /status  /cancel  /help\n(reply /skip for optional MRP & Description)\n\nOrder alerts:\n/subscribe — get every new-order alert on this chat\n/unsubscribe — stop getting order alerts\n/subscribers — list who currently gets alerts");
+      tgSend(chatId, "To add a product, just send a *photo* — I'll ask for Name, Category, Price, MRP and Description one by one.\n\nOr send photo + caption with all fields at once:\nName: Meera Jhumka\nCategory: Earrings\nPrice: 449\nMRP: 699\nDescription: antique gold jhumka\n\nCommands:\n/list  /delete <id>  /status  /cancel  /help\n/addcat <name> — add a new category\n/cats — list all categories\n(reply /skip for optional MRP & Description)\n\nOrder alerts:\n/subscribe — get every new-order alert on this chat\n/unsubscribe — stop getting order alerts\n/subscribers — list who currently gets alerts");
     } else if (cmd === "/add") {
       tgSend(chatId, "Just send a photo (or image URL) + caption:\nName: …\nCategory: …\nPrice: …\nMRP: … (optional)\nDescription: … (optional)");
     } else if (cmd === "/list") {
@@ -141,6 +237,24 @@ function doPost(e) {
       const d = getDraft(chatId);
       const last = draftStore().getProperty("lastError_" + chatId);
       tgSend(chatId, "🐞 draft: " + (d ? JSON.stringify(d) : "(none)") + (last ? "\nlastErr: " + last : ""), "Markdown");
+    } else if (cmd === "/addcat") {
+      if (!arg) {
+        tgSend(chatId, "Usage: /addcat <category name>\nExample: /addcat Choker");
+        return jsonOut({ ok: true });
+      }
+      const cats = getCatalogCategories();
+      if (cats.indexOf(arg) === -1) {
+        cats.push(arg);
+        saveCatalogCategories(cats);
+        tgSend(chatId, "✅ Category added: *" + arg + "*", "Markdown");
+      } else {
+        tgSend(chatId, "ℹ️ Category already exists: *" + arg + "*", "Markdown");
+      }
+      return jsonOut({ ok: true });
+    } else if (cmd === "/cats") {
+      const cats = getCatalogCategories();
+      tgSend(chatId, "📂 *Categories:*\n" + cats.map(function(c) { return "• " + c; }).join("\n"), "Markdown");
+      return jsonOut({ ok: true });
     } else if (cmd === "/subscribe") {
       const owner = getScriptProp("OWNER_CHAT_ID", "");
       if (String(chatId) === String(owner)) {
@@ -200,9 +314,30 @@ function doPost(e) {
   }
 
   if (getDraft(chatId)) {
+    const draft = getDraft(chatId);
+    
+    // Check if waiting for custom category text (from "➕ Add New Category" button)
+    if (draft.waitingForCustomCategory) {
+      const newCat = text.trim();
+      if (!newCat || newCat.charAt(0) === "/") {
+        tgSend(chatId, "❌ Please type a category name (or /cancel).");
+        return jsonOut({ ok: true });
+      }
+      // Save to catalog categories list (persisted)
+      const cats = getCatalogCategories();
+      if (cats.indexOf(newCat) === -1) {
+        cats.push(newCat);
+        saveCatalogCategories(cats);
+      }
+      draft.fields.category = newCat;
+      draft.waitingForCustomCategory = false;
+      setDraft(chatId, draft);
+      tgSend(chatId, "✅ New category added: *" + newCat + "*", "Markdown");
+      return continueDraft(chatId);
+    }
+    
     // Plain-text answer to the current question.
     if (text === "/skip") {
-      const draft = getDraft(chatId);
       const f = nextBlankIndex(draft);
       if (f < FIELDS.length && (FIELDS[f] === "mrp" || FIELDS[f] === "description")) {
         draft.fields[FIELDS[f]] = "";
@@ -217,7 +352,6 @@ function doPost(e) {
       tgSend(chatId, "🚫 Cancelled. Send a new photo to start again.");
       return jsonOut({ ok: true });
     }
-    const draft = getDraft(chatId);
     const parsed = parseCaption(text);
     FIELDS.forEach(function (k) { if (parsed[k]) draft.fields[k] = parsed[k]; });
     const idx = nextBlankIndex(draft);
@@ -259,7 +393,7 @@ function doGet(e) {
       diag_draft: (function () { try { return JSON.parse(sp.getProperty("draft_1465849687") || "null"); } catch (e) { return "ERR"; } })(),
       diag_last_reply: sp.getProperty("lastError_1465849687") || null,
       products_count: (function () { try { return getProductsJson().products.length; } catch (e) { return "ERR:" + e.message; } })(),
-      message: "Zainrash catalog webhook is live."
+      message: "Zainrsh catalog webhook is live."
     });
   }
   // Isolated GitHub-write test: proves whether appendProductToJson actually works.
@@ -279,7 +413,7 @@ function doGet(e) {
     const result = syncProductsToSite();
     return jsonOut({ ok: !/❌/.test(result || ""), result: result });
   }
-  return jsonOut({ ok: true, message: "Zainrash catalog webhook is live." });
+  return jsonOut({ ok: true, message: "Zainrsh catalog webhook is live." });
 }
 
 // ---------------------------------------------------------------------------
@@ -478,13 +612,30 @@ function githubUploadImage(base64Data, filename) {
 // ---------------------------------------------------------------------------
 // Telegram helpers
 // ---------------------------------------------------------------------------
-function tgSend(chatId, text, parseMode) {
+function tgSend(chatId, text, parseMode, replyMarkup) {
   const token = getBotToken();
   if (!token) return;
   const url = "https://api.telegram.org/bot" + token + "/sendMessage";
   const payload = { chat_id: String(chatId), text: text };
   if (parseMode) payload.parse_mode = parseMode;
+  if (replyMarkup) payload.reply_markup = replyMarkup;
   UrlFetchApp.fetch(url, { method: "post", contentType: "application/json", payload: JSON.stringify(payload), muteHttpExceptions: true });
+}
+
+// Send inline keyboard for category selection
+function sendCategoryKeyboard(chatId) {
+  const cats = getCatalogCategories();
+  const buttons = [];
+  // 2 columns per row
+  for (let i = 0; i < cats.length; i += 2) {
+    const row = [{ text: cats[i], callback_data: "cat:" + cats[i] }];
+    if (i + 1 < cats.length) row.push({ text: cats[i + 1], callback_data: "cat:" + cats[i + 1] });
+    buttons.push(row);
+  }
+  // Add "➕ Add New Category" button
+  buttons.push([{ text: "➕ Add New Category", callback_data: "cat:__ADD_NEW__" }]);
+  const markup = { inline_keyboard: buttons };
+  tgSend(chatId, "📝 *Step 2/5 — Category*\nTap a category or add a new one:", "Markdown", markup);
 }
 
 // --- Multi-recipient order alerts -------------------------------------------------
@@ -529,7 +680,7 @@ function downloadTelegramFile(fileId) {
 }
 
 function jsonOut(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+  return HtmlService.createHtmlOutput(JSON.stringify(obj)).setContentType(HtmlService.ContentType.JSON);
 }
 
 // ---------------------------------------------------------------------------
@@ -615,50 +766,6 @@ function getProductsSheet() {
     s.appendRow(["id", "category", "name", "price", "mrp", "image", "description", "inStock"]);
   }
   return s;
-}
-
-// ---------------------------------------------------------------------------
-// Influencer / promo codes — managed from a "PromoCodes" tab in this sheet.
-// Columns: code | type | value | influencer | active
-//   type  : "percent" (value = % off subtotal) or "flat" (value = ₹ off)
-//   value : number
-//   active: anything except no/false/0 means active
-// The PromoCodes tab is created automatically (with sample rows) on first call.
-// ---------------------------------------------------------------------------
-function getPromoSheet() {
-  const ss = activeOrConfiguredSs();
-  let s = ss.getSheetByName("PromoCodes");
-  if (!s) {
-    s = ss.insertSheet("PromoCodes");
-    s.appendRow(["code", "type", "value", "influencer", "active"]);
-    s.appendRow(["RAJ10", "percent", 10, "Raj", "yes"]);
-    s.appendRow(["NEHA50", "flat", 50, "Neha", "yes"]);
-    s.appendRow(["MIRA15", "percent", 15, "Mira", "yes"]);
-  }
-  return s;
-}
-
-function getPromoCodes() {
-  try {
-    const sheet = getPromoSheet();
-    const data = sheet.getDataRange().getValues();
-    if (data.length < 2) return { ok: true, codes: {} };
-    const codes = {};
-    for (let row = 1; row < data.length; row++) {
-      const code = (data[row][0] || "").toString().trim().toUpperCase();
-      if (!code) continue;
-      const type = (data[row][1] || "percent").toString().trim().toLowerCase();
-      const value = Number(data[row][2]);
-      if (!isFinite(value)) continue;
-      const influencer = (data[row][3] || "").toString().trim();
-      const active = (data[row][4] || "").toString().trim().toLowerCase();
-      if (active === "no" || active === "false" || active === "0") continue;
-      codes[code] = { type: type === "flat" ? "flat" : "percent", value: value, influencer: influencer };
-    }
-    return { ok: true, codes: codes };
-  } catch (err) {
-    return { ok: false, error: String(err && err.message ? err.message : err), codes: {} };
-  }
 }
 
 function logOrder(merchantOrderId, customer, items, total, status, paymentMode) {
@@ -752,7 +859,16 @@ function continueDraft(chatId) {
   if (!draft) { tgSend(chatId, "❌ No draft found. Send a photo to start."); return jsonOut({ ok: true }); }
   const idx = nextBlankIndex(draft);
   if (idx < FIELDS.length) {
-    tgSend(chatId, QUESTION[FIELDS[idx]], "Markdown");
+    const field = FIELDS[idx];
+    if (field === "category") {
+      // Show inline keyboard for category selection
+      sendCategoryKeyboard(chatId);
+      // Track that we're waiting for category via callback
+      draft.waitingForCategory = true;
+      setDraft(chatId, draft);
+    } else {
+      tgSend(chatId, QUESTION[field], "Markdown");
+    }
     return jsonOut({ ok: true });
   }
   // All fields collected. Publish.
@@ -784,7 +900,7 @@ function continueDraft(chatId) {
 
 // Menu shown when the Sheet is opened.
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu("Zainrash Catalog")
+  SpreadsheetApp.getUi().createMenu("Zainrsh Catalog")
     .addItem("Sync -> Site", "syncProductsToSite")
     .addItem("Count rows in sheet", "countSheetRows")
     .addToUi();
@@ -802,32 +918,6 @@ function onEdit(e) {
     if (now - last < 15000) return; // skip if synced <15s ago
     syncProductsToSite();
   } catch (err) { console.error("onEdit sync failed: " + err.message); }
-}
-
-// Run this ONCE from the Apps Script editor (Run ▸ installEditTrigger) to make
-// the store auto-sync whenever you edit the Products sheet. Without an installed
-// trigger, onEdit never fires on its own — you'd have to manually hit "sync".
-// Safe to run repeatedly: it removes any old onEdit trigger first, so no dupes.
-function installEditTrigger() {
-  // Resolve the spreadsheet: prefer the one this script is bound to, else SHEET_ID.
-  let ss = null;
-  try { ss = SpreadsheetApp.getActiveSpreadsheet(); } catch (e) { ss = null; }
-  if (!ss) {
-    const sid = getScriptProp("SHEET_ID", "");
-    if (sid && sid.indexOf("PASTE") === -1) ss = SpreadsheetApp.openById(sid);
-  }
-  if (!ss) {
-    Logger.log("ERROR: could not resolve the Products spreadsheet. Open this script FROM the sheet (Tools ▸ Script editor) or set the SHEET_ID Script Property, then run again.");
-    return;
-  }
-
-  // Remove any existing onEdit triggers to avoid duplicates.
-  ScriptApp.getProjectTriggers().forEach(function (t) {
-    if (t.getHandlerFunction() === "onEdit") ScriptApp.deleteTrigger(t);
-  });
-
-  ScriptApp.newTrigger("onEdit").forSpreadsheet(ss).onEdit().create();
-  Logger.log("✅ Installed onEdit trigger on spreadsheet: " + ss.getName());
 }
 
 // Read the Products sheet and build the products.json array.
