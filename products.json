@@ -8,20 +8,17 @@
     "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
     "images": [],
     "description": "test via sheet",
-    "inStock": true
+    "inStock": false
   },
   {
     "id": "2",
     "category": "Necklace",
-    "name": "Mera Necklace",
-    "price": 287,
-    "mrp": 399,
-    "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
-    "images": [
-      "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
-      "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg"
-    ],
-    "description": "Top Necklace",
+    "name": "partywear",
+    "price": 699,
+    "mrp": 599,
+    "image": "https://i.postimg.cc/FH85z8Ds/Whats-App-Image-2026-08-19-at-14-51-08.jpg",
+    "images": [],
+    "description": "western wear",
     "inStock": true
   },
   {
@@ -55,10 +52,10 @@
     "image": "https://i.postimg.cc/nrMn7hKZ/Screenshot-2026-07-25-at-12-59-24-PM.png",
     "images": [],
     "description": "Trending",
-    "inStock": false
+    "inStock": true
   },
   {
-    "id": "ring",
+    "id": "6",
     "category": "RIngs",
     "name": "Ring",
     "price": 349,
@@ -146,8 +143,8 @@
     "id": "test-pendant-56409",
     "name": "Test Pendant",
     "category": "Pendants",
-    "price": 499.0,
-    "mrp": 699.0,
+    "price": 499,
+    "mrp": 699,
     "description": "A lovely test piece.",
     "image": "images/test-pendant-56407.jpg",
     "images": [],
@@ -157,8 +154,8 @@
     "id": "test-pendant-56539",
     "name": "Test Pendant",
     "category": "Pendants",
-    "price": 499.0,
-    "mrp": 699.0,
+    "price": 499,
+    "mrp": 699,
     "description": "A lovely test piece.",
     "image": "images/test-pendant-56536.jpg",
     "images": [],
@@ -168,8 +165,8 @@
     "id": "test-product-2-57352",
     "name": "Test Product  2",
     "category": "Earrings",
-    "price": 299.0,
-    "mrp": 399.0,
+    "price": 299,
+    "mrp": 399,
     "description": "A test item 2",
     "image": "images/test-product-2-57350.jpg",
     "images": [],
