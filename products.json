@@ -152,5 +152,16 @@
     "image": "images/test-pendant-56407.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "test-pendant-56539",
+    "name": "Test Pendant",
+    "category": "Pendants",
+    "price": 499.0,
+    "mrp": 699.0,
+    "description": "A lovely test piece.",
+    "image": "images/test-pendant-56536.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
