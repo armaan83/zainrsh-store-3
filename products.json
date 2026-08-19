@@ -153,5 +153,16 @@
     "image": "images/test-product-2-1787140164.jpg",
     "id": "test-product-2-40165",
     "inStock": true
+  },
+  {
+    "id": "demo-43986",
+    "name": "Demo",
+    "category": "Pendant",
+    "price": 0,
+    "mrp": 780.0,
+    "description": "Small Test Description nothing much to tell",
+    "image": "images/demo-43985.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
