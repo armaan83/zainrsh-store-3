@@ -133,5 +133,15 @@
     "images": [],
     "description": "Complete maang tikka set with matching earrings",
     "inStock": true
+  },
+  {
+    "name": "Test Product",
+    "category": "Earrings",
+    "price": 199.0,
+    "mrp": 299.0,
+    "description": "A test item",
+    "image": "images/test-product-1787139796.jpg",
+    "id": "test-product-39798",
+    "inStock": true
   }
 ]
