@@ -163,5 +163,16 @@
     "image": "images/test-pendant-56536.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "test-product-2-57352",
+    "name": "Test Product  2",
+    "category": "Earrings",
+    "price": 299.0,
+    "mrp": 399.0,
+    "description": "A test item 2",
+    "image": "images/test-product-2-57350.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
