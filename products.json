@@ -143,5 +143,15 @@
     "image": "images/test-product-1787139796.jpg",
     "id": "test-product-39798",
     "inStock": true
+  },
+  {
+    "name": "Test Product 2",
+    "category": "Rings",
+    "price": 599.0,
+    "mrp": 766.0,
+    "description": "A test item",
+    "image": "images/test-product-2-1787140164.jpg",
+    "id": "test-product-2-40165",
+    "inStock": true
   }
 ]
