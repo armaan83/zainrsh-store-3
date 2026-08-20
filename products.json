@@ -44,17 +44,6 @@
     "inStock": true
   },
   {
-    "id": "testing",
-    "category": "Bangles",
-    "name": "Testing",
-    "price": 447,
-    "mrp": 766,
-    "image": "images/testing-1787207287521.jpg",
-    "images": [],
-    "description": "A test from my cellphone",
-    "inStock": true
-  },
-  {
     "id": "13",
     "category": "Rings",
     "name": "13",
