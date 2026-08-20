@@ -73,7 +73,18 @@
     "mrp": 199,
     "image": "images/turkish-ring-1787209886735.jpg",
     "images": [],
-    "description": "turkish style adjustable ring",
+    "description": "turkish style adjustable ring each",
+    "inStock": true
+  },
+  {
+    "id": "stud",
+    "category": "earring",
+    "name": "stud",
+    "price": 149,
+    "mrp": 299,
+    "image": "images/stud-1787211017688.jpg",
+    "images": [],
+    "description": "Elegant gold-tone finish",
     "inStock": true
   },
   {
