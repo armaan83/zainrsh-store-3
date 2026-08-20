@@ -66,17 +66,6 @@
     "inStock": false
   },
   {
-    "id": "demo-43986",
-    "name": "Demo",
-    "category": "Pendant",
-    "price": 0,
-    "mrp": 780,
-    "description": "Small Test Description nothing much to tell",
-    "image": "images/demo-43985.jpg",
-    "images": [],
-    "inStock": true
-  },
-  {
     "id": "test-pendant-46626",
     "name": "Test Pendant",
     "category": "Pendants",
