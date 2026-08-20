@@ -22,6 +22,17 @@
     "inStock": true
   },
   {
+    "id": "3",
+    "category": "Earrings",
+    "name": "Kastu",
+    "price": 229,
+    "mrp": 377,
+    "image": "https://i.postimg.cc/5N9hLznr/Screenshot-2026-07-25-at-18-57-03-Pear-Cut-Blue-Topaz-Drop-Earrings-in-Sterling-Silver.png",
+    "images": [],
+    "description": "Branded Ear RIng",
+    "inStock": true
+  },
+  {
     "id": "4",
     "category": "Bangles",
     "name": "Shryt",
@@ -30,6 +41,17 @@
     "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
     "images": [],
     "description": "New Banle",
+    "inStock": true
+  },
+  {
+    "id": "testing",
+    "category": "Bangles",
+    "name": "Testing",
+    "price": 447,
+    "mrp": 766,
+    "image": "images/testing-1787207287521.jpg",
+    "images": [],
+    "description": "A test from my cellphone",
     "inStock": true
   },
   {
