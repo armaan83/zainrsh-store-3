@@ -11,61 +11,6 @@
     "inStock": false
   },
   {
-    "id": "2",
-    "category": "Necklace",
-    "name": "partywear",
-    "price": 699,
-    "mrp": 599,
-    "image": "https://i.postimg.cc/FH85z8Ds/Whats-App-Image-2026-08-19-at-14-51-08.jpg",
-    "images": [],
-    "description": "western wear",
-    "inStock": true
-  },
-  {
-    "id": "3",
-    "category": "Earrings",
-    "name": "Kastu",
-    "price": 229,
-    "mrp": 377,
-    "image": "https://i.postimg.cc/5N9hLznr/Screenshot-2026-07-25-at-18-57-03-Pear-Cut-Blue-Topaz-Drop-Earrings-in-Sterling-Silver.png",
-    "images": [],
-    "description": "Branded Ear RIng",
-    "inStock": true
-  },
-  {
-    "id": "4",
-    "category": "Bangles",
-    "name": "Shryt",
-    "price": 657,
-    "mrp": 789,
-    "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
-    "images": [],
-    "description": "New Banle",
-    "inStock": true
-  },
-  {
-    "id": "testing",
-    "category": "Bangles",
-    "name": "Testing",
-    "price": 447,
-    "mrp": 766,
-    "image": "images/testing-1787207287521.jpg",
-    "images": [],
-    "description": "A test from my cellphone",
-    "inStock": true
-  },
-  {
-    "id": "13",
-    "category": "Rings",
-    "name": "13",
-    "price": 777,
-    "mrp": 1000,
-    "image": "images/13-1787207531135.jpg",
-    "images": [],
-    "description": "Check out the mobile uploads",
-    "inStock": true
-  },
-  {
     "id": "turkish-ring",
     "category": "Ring",
     "name": "turkish ring",
@@ -118,6 +63,61 @@
     "image": "images/floral-earring-1787211361068.jpg",
     "images": [],
     "description": "? Elegant floral-inspired design",
+    "inStock": true
+  },
+  {
+    "id": "2",
+    "category": "Necklace",
+    "name": "partywear",
+    "price": 699,
+    "mrp": 599,
+    "image": "https://i.postimg.cc/FH85z8Ds/Whats-App-Image-2026-08-19-at-14-51-08.jpg",
+    "images": [],
+    "description": "western wear",
+    "inStock": true
+  },
+  {
+    "id": "3",
+    "category": "Earrings",
+    "name": "Kastu",
+    "price": 229,
+    "mrp": 377,
+    "image": "https://i.postimg.cc/5N9hLznr/Screenshot-2026-07-25-at-18-57-03-Pear-Cut-Blue-Topaz-Drop-Earrings-in-Sterling-Silver.png",
+    "images": [],
+    "description": "Branded Ear RIng",
+    "inStock": true
+  },
+  {
+    "id": "4",
+    "category": "Bangles",
+    "name": "Shryt",
+    "price": 657,
+    "mrp": 789,
+    "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
+    "images": [],
+    "description": "New Banle",
+    "inStock": true
+  },
+  {
+    "id": "testing",
+    "category": "Bangles",
+    "name": "Testing",
+    "price": 447,
+    "mrp": 766,
+    "image": "images/testing-1787207287521.jpg",
+    "images": [],
+    "description": "A test from my cellphone",
+    "inStock": true
+  },
+  {
+    "id": "13",
+    "category": "Rings",
+    "name": "13",
+    "price": 777,
+    "mrp": 1000,
+    "image": "images/13-1787207531135.jpg",
+    "images": [],
+    "description": "Check out the mobile uploads",
     "inStock": true
   },
   {
