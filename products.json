@@ -64,16 +64,5 @@
     "images": [],
     "description": "NewRIng",
     "inStock": false
-  },
-  {
-    "id": "test-product-2-57352",
-    "name": "Test Product  2",
-    "category": "Earrings",
-    "price": 299,
-    "mrp": 399,
-    "description": "A test item 2",
-    "image": "images/test-product-2-57350.jpg",
-    "images": [],
-    "inStock": false
   }
 ]
