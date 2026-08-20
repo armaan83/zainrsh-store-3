@@ -74,7 +74,7 @@
     "description": "A lovely test piece.",
     "image": "images/test-pendant-56536.jpg",
     "images": [],
-    "inStock": true
+    "inStock": false
   },
   {
     "id": "test-product-2-57352",
