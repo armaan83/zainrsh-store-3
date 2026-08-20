@@ -121,6 +121,17 @@
     "inStock": true
   },
   {
+    "id": "simple-caption-sheet-23671",
+    "category": "Earrings",
+    "name": "Simple Caption Sheet",
+    "price": 450,
+    "mrp": 600,
+    "image": "images/simple-caption-sheet-1787200622750.jpg",
+    "images": [],
+    "description": "Sheet Auto update jhumka (optional)",
+    "inStock": true
+  },
+  {
     "name": "Test Product 2",
     "category": "Rings",
     "price": 599,
