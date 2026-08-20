@@ -110,6 +110,17 @@
     "inStock": true
   },
   {
+    "id": "floral-earring",
+    "category": "earring",
+    "name": "floral earring",
+    "price": 299,
+    "mrp": 349,
+    "image": "images/floral-earring-1787211361068.jpg",
+    "images": [],
+    "description": "? Elegant floral-inspired design",
+    "inStock": true
+  },
+  {
     "id": "5",
     "category": "Necklace",
     "name": "Apka Necklace",
