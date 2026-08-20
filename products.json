@@ -85,6 +85,6 @@
     "description": "A test item 2",
     "image": "images/test-product-2-57350.jpg",
     "images": [],
-    "inStock": true
+    "inStock": false
   }
 ]
