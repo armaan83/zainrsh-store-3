@@ -74,7 +74,7 @@
     "image": "images/test-sheet-write-1787159868726.jpg",
     "images": [],
     "description": "Testing sheet append",
-    "inStock": true
+    "inStock": false
   },
   {
     "id": "test-product-bot-50493",
