@@ -99,6 +99,17 @@
     "inStock": true
   },
   {
+    "id": "stud",
+    "category": "earring",
+    "name": "stud",
+    "price": 149,
+    "mrp": 299,
+    "image": "images/stud-1787211101489.jpg",
+    "images": [],
+    "description": "Elegant gold-tone finish",
+    "inStock": true
+  },
+  {
     "id": "5",
     "category": "Necklace",
     "name": "Apka Necklace",
