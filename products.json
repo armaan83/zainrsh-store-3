@@ -66,16 +66,6 @@
     "inStock": false
   },
   {
-    "id": "diag-test-1787151455954",
-    "category": "Diag",
-    "name": "Diag Test",
-    "price": 1,
-    "mrp": 0,
-    "description": "write test",
-    "image": "https://via.placeholder.com/1.png",
-    "inStock": true
-  },
-  {
     "id": "test-pendant-56409",
     "name": "Test Pendant",
     "category": "Pendants",
