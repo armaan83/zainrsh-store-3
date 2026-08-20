@@ -55,6 +55,17 @@
     "inStock": true
   },
   {
+    "id": "13",
+    "category": "Rings",
+    "name": "13",
+    "price": 777,
+    "mrp": 1000,
+    "image": "images/13-1787207531135.jpg",
+    "images": [],
+    "description": "Check out the mobile uploads",
+    "inStock": true
+  },
+  {
     "id": "5",
     "category": "Necklace",
     "name": "Apka Necklace",
