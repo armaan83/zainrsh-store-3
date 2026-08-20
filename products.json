@@ -66,16 +66,6 @@
     "inStock": false
   },
   {
-    "name": "Test Product 2",
-    "category": "Rings",
-    "price": 599,
-    "mrp": 766,
-    "description": "A test item",
-    "image": "images/test-product-2-1787140164.jpg",
-    "id": "test-product-2-40165",
-    "inStock": true
-  },
-  {
     "id": "demo-43986",
     "name": "Demo",
     "category": "Pendant",
