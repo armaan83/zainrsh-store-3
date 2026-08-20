@@ -66,17 +66,6 @@
     "inStock": false
   },
   {
-    "id": "test1-46958",
-    "name": "Test1",
-    "category": "New",
-    "price": 444,
-    "mrp": 888,
-    "description": "KOi bhi chalenga",
-    "image": "images/test1-46956.jpg",
-    "images": [],
-    "inStock": true
-  },
-  {
     "id": "trial-48984",
     "name": "trial",
     "category": "Necklace",
