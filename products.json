@@ -77,6 +77,28 @@
     "inStock": true
   },
   {
+    "id": "auto-upload-78459",
+    "category": "Earrings",
+    "name": "Auto Upload",
+    "price": 350,
+    "mrp": 500,
+    "image": "images/auto-upload-1787196376951.jpg",
+    "images": [],
+    "description": "Antique gold finish sheet append",
+    "inStock": true
+  },
+  {
+    "id": "test-product-bot-50493",
+    "category": "Earrings",
+    "name": "Test Product  bot",
+    "price": 299,
+    "mrp": 399,
+    "image": "images/test-product-bot-1787196749428.jpg",
+    "images": [],
+    "description": "A test item bot",
+    "inStock": true
+  },
+  {
     "name": "Test Product",
     "category": "Earrings",
     "price": 199,
