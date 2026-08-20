@@ -66,17 +66,6 @@
     "inStock": false
   },
   {
-    "id": "trial-48984",
-    "name": "trial",
-    "category": "Necklace",
-    "price": 688,
-    "mrp": 1099,
-    "description": "antique gold Chain",
-    "image": "images/trial-48982.jpg",
-    "images": [],
-    "inStock": true
-  },
-  {
     "id": "diag-test-1787151455954",
     "category": "Diag",
     "name": "Diag Test",
