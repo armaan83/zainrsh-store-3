@@ -99,6 +99,17 @@
     "inStock": true
   },
   {
+    "id": "xyz-test-54909",
+    "category": "Earrings",
+    "name": "XYZ Test",
+    "price": 299,
+    "mrp": 399,
+    "image": "images/xyz-test-1787198653580.jpg",
+    "images": [],
+    "description": "Bot A test item",
+    "inStock": true
+  },
+  {
     "name": "Test Product",
     "category": "Earrings",
     "price": 199,
