@@ -53,16 +53,5 @@
     "images": [],
     "description": "Trending",
     "inStock": true
-  },
-  {
-    "id": "6",
-    "category": "RIngs",
-    "name": "Ring",
-    "price": 349,
-    "mrp": 487,
-    "image": "https://iili.io/Ck9xLXV.png",
-    "images": [],
-    "description": "NewRIng",
-    "inStock": false
   }
 ]
