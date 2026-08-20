@@ -44,6 +44,17 @@
     "inStock": true
   },
   {
+    "id": "testing",
+    "category": "Bangles",
+    "name": "Testing",
+    "price": 447,
+    "mrp": 766,
+    "image": "images/testing-1787207287521.jpg",
+    "images": [],
+    "description": "A test from my cellphone",
+    "inStock": true
+  },
+  {
     "id": "13",
     "category": "Rings",
     "name": "13",
@@ -52,6 +63,17 @@
     "image": "images/13-1787207531135.jpg",
     "images": [],
     "description": "Check out the mobile uploads",
+    "inStock": true
+  },
+  {
+    "id": "turkish-ring",
+    "category": "Ring",
+    "name": "turkish ring",
+    "price": 399,
+    "mrp": 199,
+    "image": "images/turkish-ring-1787209886735.jpg",
+    "images": [],
+    "description": "turkish style adjustable ring",
     "inStock": true
   },
   {
