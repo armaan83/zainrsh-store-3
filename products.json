@@ -110,13 +110,14 @@
     "inStock": true
   },
   {
+    "id": "test-product-05919",
+    "category": "Earrings   Price: 299",
     "name": "Test Product",
-    "category": "Earrings",
-    "price": 199,
-    "mrp": 299,
+    "price": 388,
+    "mrp": 399,
+    "image": "images/test-product-1787198704850.jpg",
+    "images": [],
     "description": "A test item",
-    "image": "images/test-product-1787139796.jpg",
-    "id": "test-product-39798",
     "inStock": true
   },
   {
