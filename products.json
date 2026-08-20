@@ -66,17 +66,6 @@
     "inStock": false
   },
   {
-    "id": "test-sheet-write-70115",
-    "category": "Test",
-    "name": "Test Sheet Write",
-    "price": 999,
-    "mrp": 1299,
-    "image": "images/test-sheet-write-1787159868726.jpg",
-    "images": [],
-    "description": "Testing sheet append",
-    "inStock": false
-  },
-  {
     "id": "test-product-bot-50493",
     "category": "Earrings",
     "name": "Test Product  bot",
