@@ -1,21 +1,10 @@
 [
   {
-    "id": "1",
-    "category": "Rings",
-    "name": "Sheet Sync Test",
-    "price": 199,
-    "mrp": 299,
-    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
-    "images": [],
-    "description": "test via sheet",
-    "inStock": false
-  },
-  {
-    "id": "turkish-ring",
+    "id": "Turkish-ring",
     "category": "Ring",
     "name": "turkish ring",
     "price": 199,
-    "mrp": 199,
+    "mrp": 399,
     "image": "images/turkish-ring-1787209886735.jpg",
     "images": [],
     "description": "turkish style adjustable ring each",
@@ -63,7 +52,29 @@
     "image": "images/floral-earring-1787211361068.jpg",
     "images": [],
     "description": "? Elegant floral-inspired design",
+    "inStock": false
+  },
+  {
+    "id": "Dimond Neckles",
+    "category": "Neckles",
+    "name": "Dimond Neckles",
+    "price": 249,
+    "mrp": 0,
+    "image": "https://photos.app.goo.gl/KjH4VRkBxF6augwL6",
+    "images": [],
+    "description": "",
     "inStock": true
+  },
+  {
+    "id": "1",
+    "category": "Rings",
+    "name": "Sheet Sync Test",
+    "price": 199,
+    "mrp": 299,
+    "image": "https://raw.githubusercontent.com/armaan83/zainrsh-store-3/main/images/mera-necklace-1785002421.jpg",
+    "images": [],
+    "description": "test via sheet",
+    "inStock": false
   },
   {
     "id": "2",
