@@ -55,14 +55,25 @@
     "inStock": false
   },
   {
+    "id": "dimond-neckles",
+    "category": "",
+    "name": "Dimond Neckles",
+    "price": 249,
+    "mrp": 499,
+    "image": "https://photos.app.goo.gl/KjH4VRkBxF6augwL6",
+    "images": [],
+    "description": "Elegant Silver-tone finish",
+    "inStock": true
+  },
+  {
     "id": "Dimond Neckles",
     "category": "Neckles",
     "name": "Dimond Neckles",
     "price": 249,
-    "mrp": 0,
-    "image": "https://photos.app.goo.gl/KjH4VRkBxF6augwL6",
+    "mrp": 499,
+    "image": "https://i.postimg.cc/tgLCsdQB/Whats-App-Image-2026-08-28-at-5-29-58-PM.jpg",
     "images": [],
-    "description": "",
+    "description": "Elegant Silver-tone finish",
     "inStock": true
   },
   {
