@@ -75,16 +75,5 @@
     "images": [],
     "description": "Elegant Silver-tone finish",
     "inStock": true
-  },
-  {
-    "id": "2",
-    "category": "Necklace",
-    "name": "partywear",
-    "price": 699,
-    "mrp": 599,
-    "image": "https://i.postimg.cc/FH85z8Ds/Whats-App-Image-2026-08-19-at-14-51-08.jpg",
-    "images": [],
-    "description": "western wear",
-    "inStock": true
   }
 ]
