@@ -119,16 +119,5 @@
     "images": [],
     "description": "New Banle",
     "inStock": true
-  },
-  {
-    "id": "5",
-    "category": "Necklace",
-    "name": "Apka Necklace",
-    "price": 188,
-    "mrp": 233,
-    "image": "https://i.postimg.cc/nrMn7hKZ/Screenshot-2026-07-25-at-12-59-24-PM.png",
-    "images": [],
-    "description": "Trending",
-    "inStock": true
   }
 ]
