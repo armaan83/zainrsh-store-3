@@ -108,16 +108,5 @@
     "images": [],
     "description": "Branded Ear RIng",
     "inStock": true
-  },
-  {
-    "id": "4",
-    "category": "Bangles",
-    "name": "Shryt",
-    "price": 657,
-    "mrp": 789,
-    "image": "https://i.postimg.cc/3x82K8rP/bangle.webp",
-    "images": [],
-    "description": "New Banle",
-    "inStock": true
   }
 ]
