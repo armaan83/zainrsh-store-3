@@ -11,7 +11,7 @@
     "inStock": true
   },
   {
-    "id": "stud",
+    "id": "stud_1",
     "category": "earring",
     "name": "stud",
     "price": 149,
@@ -22,7 +22,7 @@
     "inStock": true
   },
   {
-    "id": "stud",
+    "id": "stud_2",
     "category": "earring",
     "name": "stud",
     "price": 149,
@@ -33,7 +33,7 @@
     "inStock": true
   },
   {
-    "id": "stud",
+    "id": "stud_3",
     "category": "earring",
     "name": "stud",
     "price": 149,
