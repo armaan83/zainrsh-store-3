@@ -6,9 +6,7 @@
     "price": 199,
     "mrp": 399,
     "image": "images/turkish-ring-1787209886735.jpg",
-    "images": [
-      "images/turkish-ring-1787209886735.jpg"
-    ],
+    "images": [],
     "description": "turkish style adjustable ring each",
     "inStock": true
   },
@@ -19,9 +17,7 @@
     "price": 149,
     "mrp": 299,
     "image": "images/stud-1787211017688.jpg",
-    "images": [
-      "images/stud-1787211017688.jpg"
-    ],
+    "images": [],
     "description": "Elegant gold-tone finish",
     "inStock": true
   },
@@ -32,9 +28,7 @@
     "price": 149,
     "mrp": 299,
     "image": "images/stud-1787211070467.jpg",
-    "images": [
-      "images/stud-1787211070467.jpg"
-    ],
+    "images": [],
     "description": "Elegant gold-tone finish",
     "inStock": true
   },
@@ -45,9 +39,7 @@
     "price": 149,
     "mrp": 299,
     "image": "images/stud-1787211101489.jpg",
-    "images": [
-      "images/stud-1787211101489.jpg"
-    ],
+    "images": [],
     "description": "Elegant gold-tone finish",
     "inStock": true
   },
@@ -58,9 +50,7 @@
     "price": 299,
     "mrp": 349,
     "image": "images/floral-earring-1787211361068.jpg",
-    "images": [
-      "images/floral-earring-1787211361068.jpg"
-    ],
+    "images": [],
     "description": "? Elegant floral-inspired design",
     "inStock": false
   },
@@ -71,9 +61,7 @@
     "price": 450,
     "mrp": 699,
     "image": "images/meera-jhumka-1788669908788.jpg",
-    "images": [
-      "images/meera-jhumka-1788669908788.jpg"
-    ],
+    "images": [],
     "description": "Beautiful gold-plated earrings",
     "inStock": true
   },
@@ -84,9 +72,7 @@
     "price": 450,
     "mrp": 699,
     "image": "images/meera-jhumka-1788669943118.jpg",
-    "images": [
-      "images/meera-jhumka-1788669943118.jpg"
-    ],
+    "images": [],
     "description": "Beautiful gold-plated earrings",
     "inStock": true
   },
@@ -97,9 +83,7 @@
     "price": 299,
     "mrp": 399,
     "image": "images/test-product-1788670444386.jpg",
-    "images": [
-      "images/test-product-1788670444386.jpg"
-    ],
+    "images": [],
     "description": "A test item",
     "inStock": true
   },
@@ -111,7 +95,6 @@
     "mrp": 699,
     "image": "images/multiple-photos-1-1788670866298.jpg",
     "images": [
-      "images/multiple-photos-1-1788670866298.jpg",
       "images/multiple-photos-2-1788670866298.jpg",
       "images/multiple-photos-3-1788670866298.jpg"
     ],
@@ -125,9 +108,7 @@
     "price": 450,
     "mrp": 699,
     "image": "images/1image-1788670936873.jpg",
-    "images": [
-      "images/1image-1788670936873.jpg"
-    ],
+    "images": [],
     "description": "Beautiful gold-plated earrings (optional)",
     "inStock": true
   },
@@ -138,9 +119,7 @@
     "price": 450,
     "mrp": 699,
     "image": "images/image-1788671136590.jpg",
-    "images": [
-      "images/image-1788671136590.jpg"
-    ],
+    "images": [],
     "description": "Beautiful gold-plated earrings",
     "inStock": true
   },
@@ -151,10 +130,19 @@
     "price": 230,
     "mrp": 599,
     "image": "images/single-image-1788672038332.jpg",
-    "images": [
-      "images/single-image-1788672038332.jpg"
-    ],
+    "images": [],
     "description": "Beautiful gold-plated earrings",
+    "inStock": true
+  },
+  {
+    "id": "test-product",
+    "category": "Earrings",
+    "name": "Test Product",
+    "price": 299,
+    "mrp": 399,
+    "image": "images/test-product-1788672585774.jpg",
+    "images": [],
+    "description": "A test item",
     "inStock": true
   }
 ]
