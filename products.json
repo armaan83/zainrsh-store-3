@@ -66,6 +66,17 @@
     "inStock": true
   },
   {
+    "id": "yellow-necklace-2",
+    "category": "Necklace",
+    "name": "Yellow Necklace 2",
+    "price": 1200,
+    "mrp": 1699,
+    "image": "images/yellow-necklace-2-1788666999828.jpg",
+    "images": [],
+    "description": "Beautiful gold-plated Necklace with Pearl",
+    "inStock": true
+  },
+  {
     "id": "dimond-neckles",
     "category": "",
     "name": "Dimond Neckles",
