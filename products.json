@@ -117,5 +117,18 @@
     ],
     "description": "Beautiful gold-plated earrings",
     "inStock": true
+  },
+  {
+    "id": "1image",
+    "category": "Earrings",
+    "name": "1image",
+    "price": 450,
+    "mrp": 699,
+    "image": "images/1image-1788670936873.jpg",
+    "images": [
+      "images/1image-1788670936873.jpg"
+    ],
+    "description": "Beautiful gold-plated earrings (optional)",
+    "inStock": true
   }
 ]
