@@ -76,5 +76,18 @@
     ],
     "description": "Beautiful gold-plated earrings",
     "inStock": true
+  },
+  {
+    "id": "meera-jhumka",
+    "category": "Earrings",
+    "name": "Meera Jhumka",
+    "price": 450,
+    "mrp": 699,
+    "image": "images/meera-jhumka-1788669943118.jpg",
+    "images": [
+      "images/meera-jhumka-1788669943118.jpg"
+    ],
+    "description": "Beautiful gold-plated earrings",
+    "inStock": true
   }
 ]
