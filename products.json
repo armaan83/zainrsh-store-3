@@ -102,5 +102,20 @@
     ],
     "description": "A test item",
     "inStock": true
+  },
+  {
+    "id": "multiple-photos",
+    "category": "Earrings",
+    "name": "Multiple photos",
+    "price": 450,
+    "mrp": 699,
+    "image": "images/multiple-photos-1-1788670866298.jpg",
+    "images": [
+      "images/multiple-photos-1-1788670866298.jpg",
+      "images/multiple-photos-2-1788670866298.jpg",
+      "images/multiple-photos-3-1788670866298.jpg"
+    ],
+    "description": "Beautiful gold-plated earrings",
+    "inStock": true
   }
 ]
