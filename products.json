@@ -6,7 +6,9 @@
     "price": 199,
     "mrp": 399,
     "image": "images/turkish-ring-1787209886735.jpg",
-    "images": [],
+    "images": [
+      "images/turkish-ring-1787209886735.jpg"
+    ],
     "description": "turkish style adjustable ring each",
     "inStock": true
   },
@@ -17,7 +19,9 @@
     "price": 149,
     "mrp": 299,
     "image": "images/stud-1787211017688.jpg",
-    "images": [],
+    "images": [
+      "images/stud-1787211017688.jpg"
+    ],
     "description": "Elegant gold-tone finish",
     "inStock": true
   },
@@ -28,7 +32,9 @@
     "price": 149,
     "mrp": 299,
     "image": "images/stud-1787211070467.jpg",
-    "images": [],
+    "images": [
+      "images/stud-1787211070467.jpg"
+    ],
     "description": "Elegant gold-tone finish",
     "inStock": true
   },
@@ -39,7 +45,9 @@
     "price": 149,
     "mrp": 299,
     "image": "images/stud-1787211101489.jpg",
-    "images": [],
+    "images": [
+      "images/stud-1787211101489.jpg"
+    ],
     "description": "Elegant gold-tone finish",
     "inStock": true
   },
@@ -50,7 +58,9 @@
     "price": 299,
     "mrp": 349,
     "image": "images/floral-earring-1787211361068.jpg",
-    "images": [],
+    "images": [
+      "images/floral-earring-1787211361068.jpg"
+    ],
     "description": "? Elegant floral-inspired design",
     "inStock": false
   },
@@ -61,7 +71,9 @@
     "price": 1200,
     "mrp": 1699,
     "image": "images/yellow-necklace-1788666942148.jpg",
-    "images": [],
+    "images": [
+      "images/yellow-necklace-1788666942148.jpg"
+    ],
     "description": "Beautiful gold-plated Necklace with Pearl",
     "inStock": true
   },
@@ -72,7 +84,22 @@
     "price": 1200,
     "mrp": 1699,
     "image": "images/yellow-necklace-2-1788666999828.jpg",
-    "images": [],
+    "images": [
+      "images/yellow-necklace-2-1788666999828.jpg"
+    ],
+    "description": "Beautiful gold-plated Necklace with Pearl",
+    "inStock": true
+  },
+  {
+    "id": "yellow-necklace-2",
+    "category": "Necklace",
+    "name": "Yellow Necklace 2",
+    "price": 1200,
+    "mrp": 1699,
+    "image": "images/yellow-necklace-2-1788667539774.jpg",
+    "images": [
+      "images/yellow-necklace-2-1788667539774.jpg"
+    ],
     "description": "Beautiful gold-plated Necklace with Pearl",
     "inStock": true
   },
