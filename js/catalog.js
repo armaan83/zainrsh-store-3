@@ -11,7 +11,8 @@ function escAttr(s) {
 // Collect all gallery images (single `image` + optional `images[]`) as absolute URLs.
 function productImages(product) {
   const list = [product.image].concat(Array.isArray(product.images) ? product.images : []);
-  return list.map(function (u) { return resolveImageUrl(u); }).filter(Boolean);
+  const resolved = list.map(function (u) { return resolveImageUrl(u); }).filter(Boolean);
+  return resolved.filter(function (src, idx, self) { return self.indexOf(src) === idx; });
 }
 
 // Render a clickable thumbnail strip. Returns "" when there's only one image.
