@@ -71,7 +71,7 @@
     "name": "Meera Jhumka",
     "price": 450,
     "mrp": 699,
-    "image": "images/meera-jhumka-1788669943118.jpg",
+    "image": "images/meera-jhumka-1788669908788.jpg",
     "images": [],
     "description": "Beautiful gold-plated earrings",
     "inStock": true
@@ -140,7 +140,18 @@
     "name": "Test Product",
     "price": 299,
     "mrp": 399,
-    "image": "images/test-product-1788672585774.jpg",
+    "image": "images/test-product-1788670444386.jpg",
+    "images": [],
+    "description": "A test item",
+    "inStock": true
+  },
+  {
+    "id": "test-product",
+    "category": "Earrings",
+    "name": "Test Product",
+    "price": 299,
+    "mrp": 399,
+    "image": "images/test-product-1788673378021.jpg",
     "images": [],
     "description": "A test item",
     "inStock": true
