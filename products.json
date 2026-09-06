@@ -63,31 +63,5 @@
     ],
     "description": "? Elegant floral-inspired design",
     "inStock": false
-  },
-  {
-    "id": "test-product",
-    "category": "Earrings",
-    "name": "Test Product",
-    "price": 299,
-    "mrp": 399,
-    "image": "images/test-product-1788668225338.jpg",
-    "images": [
-      "images/test-product-1788668225338.jpg"
-    ],
-    "description": "A test item",
-    "inStock": true
-  },
-  {
-    "id": "test-product",
-    "category": "Earrings",
-    "name": "Test Product",
-    "price": 299,
-    "mrp": 399,
-    "image": "images/test-product-1788668728208.jpg",
-    "images": [
-      "images/test-product-1788668728208.jpg"
-    ],
-    "description": "A test item",
-    "inStock": true
   }
 ]
