@@ -64,5 +64,16 @@
     "images": [],
     "description": "Beautiful kashmiri zumkha",
     "inStock": true
+  },
+  {
+    "id": "western-earring",
+    "category": "Earrings",
+    "name": "western earring",
+    "price": 299,
+    "mrp": 499,
+    "image": "images/western-earring-1788681643505.jpg",
+    "images": [],
+    "description": "Beautiful gold tone-plated earrings",
+    "inStock": true
   }
 ]
