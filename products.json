@@ -77,17 +77,6 @@
     "inStock": true
   },
   {
-    "id": "test-product",
-    "category": "Earrings",
-    "name": "Test Product",
-    "price": 299,
-    "mrp": 399,
-    "image": "images/test-product-1788670444386.jpg",
-    "images": [],
-    "description": "A test item",
-    "inStock": true
-  },
-  {
     "id": "multiple-photos",
     "category": "Earrings",
     "name": "Multiple photos",
@@ -132,28 +121,6 @@
     "image": "images/single-image-1788672038332.jpg",
     "images": [],
     "description": "Beautiful gold-plated earrings",
-    "inStock": true
-  },
-  {
-    "id": "test-product",
-    "category": "Earrings",
-    "name": "Test Product",
-    "price": 299,
-    "mrp": 399,
-    "image": "images/test-product-1788670444386.jpg",
-    "images": [],
-    "description": "A test item",
-    "inStock": true
-  },
-  {
-    "id": "test-product",
-    "category": "Earrings",
-    "name": "Test Product",
-    "price": 299,
-    "mrp": 399,
-    "image": "images/test-product-1788673378021.jpg",
-    "images": [],
-    "description": "A test item",
     "inStock": true
   }
 ]
