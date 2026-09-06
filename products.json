@@ -65,32 +65,6 @@
     "inStock": false
   },
   {
-    "id": "yellow-necklace-2",
-    "category": "Necklace",
-    "name": "Yellow Necklace 2",
-    "price": 1200,
-    "mrp": 1699,
-    "image": "images/yellow-necklace-2-1788666999828.jpg",
-    "images": [
-      "images/yellow-necklace-2-1788666999828.jpg"
-    ],
-    "description": "Beautiful gold-plated Necklace with Pearl",
-    "inStock": true
-  },
-  {
-    "id": "yellow-necklace-2",
-    "category": "Necklace",
-    "name": "Yellow Necklace 2",
-    "price": 1200,
-    "mrp": 1699,
-    "image": "images/yellow-necklace-2-1788667539774.jpg",
-    "images": [
-      "images/yellow-necklace-2-1788667539774.jpg"
-    ],
-    "description": "Beautiful gold-plated Necklace with Pearl",
-    "inStock": true
-  },
-  {
     "id": "test-product",
     "category": "Earrings",
     "name": "Test Product",
@@ -99,6 +73,19 @@
     "image": "images/test-product-1788668225338.jpg",
     "images": [
       "images/test-product-1788668225338.jpg"
+    ],
+    "description": "A test item",
+    "inStock": true
+  },
+  {
+    "id": "test-product",
+    "category": "Earrings",
+    "name": "Test Product",
+    "price": 299,
+    "mrp": 399,
+    "image": "images/test-product-1788668728208.jpg",
+    "images": [
+      "images/test-product-1788668728208.jpg"
     ],
     "description": "A test item",
     "inStock": true
