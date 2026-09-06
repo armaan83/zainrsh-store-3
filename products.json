@@ -55,17 +55,6 @@
     "inStock": false
   },
   {
-    "id": "kashmiri-jhumka",
-    "category": "Earrings",
-    "name": "kashmiri Jhumka",
-    "price": 299,
-    "mrp": 399,
-    "image": "images/kashmiri-jhumka-1788681452988.jpg",
-    "images": [],
-    "description": "Beautiful kashmiri zumkha",
-    "inStock": true
-  },
-  {
     "id": "western-earring",
     "category": "Earrings",
     "name": "western earring",
@@ -74,6 +63,28 @@
     "image": "images/western-earring-1788681643505.jpg",
     "images": [],
     "description": "Beautiful gold tone-plated earrings",
+    "inStock": true
+  },
+  {
+    "id": "hasli",
+    "category": "necklace",
+    "name": "Hasli",
+    "price": 449,
+    "mrp": 0,
+    "image": "images/hasli-1788719621334.jpg",
+    "images": [],
+    "description": "Beautiful gold tone hasli",
+    "inStock": true
+  },
+  {
+    "id": "kashmiri-jhumka",
+    "category": "Earrings",
+    "name": "kashmiri Jhumka",
+    "price": 299,
+    "mrp": 399,
+    "image": "images/kashmiri-jhumka-1788681452988.jpg",
+    "images": [],
+    "description": "Beautiful kashmiri zumkha",
     "inStock": true
   }
 ]
