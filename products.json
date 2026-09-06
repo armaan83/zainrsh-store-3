@@ -53,5 +53,16 @@
     "images": [],
     "description": "? Elegant floral-inspired design",
     "inStock": false
+  },
+  {
+    "id": "kashmiri-jhumka",
+    "category": "Earrings",
+    "name": "kashmiri Jhumka",
+    "price": 299,
+    "mrp": 399,
+    "image": "images/kashmiri-jhumka-1788681452988.jpg",
+    "images": [],
+    "description": "Beautiful kashmiri zumkha",
+    "inStock": true
   }
 ]
