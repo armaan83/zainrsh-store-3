@@ -143,6 +143,17 @@
     "inStock": true
   },
   {
+    "id": "black-necklace",
+    "category": "Necklace",
+    "name": "Black Necklace",
+    "price": 399,
+    "mrp": 799,
+    "image": "images/black-necklace-1788795958482.jpg",
+    "images": [],
+    "description": "multiple colors available",
+    "inStock": true
+  },
+  {
     "id": "kashmiri-jhumka",
     "category": "Earrings",
     "name": "kashmiri Jhumka",
