@@ -132,6 +132,17 @@
     "inStock": true
   },
   {
+    "id": "earing-box",
+    "category": "Earring",
+    "name": "Earing box",
+    "price": 599,
+    "mrp": 799,
+    "image": "images/earing-box-1788788343354.jpg",
+    "images": [],
+    "description": "12 puece of earring with box",
+    "inStock": true
+  },
+  {
     "id": "kashmiri-jhumka",
     "category": "Earrings",
     "name": "kashmiri Jhumka",
