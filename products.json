@@ -66,17 +66,6 @@
     "inStock": true
   },
   {
-    "id": "hasli",
-    "category": "necklace",
-    "name": "Hasli",
-    "price": 449,
-    "mrp": 0,
-    "image": "images/hasli-1788719621334.jpg",
-    "images": [],
-    "description": "Beautiful gold tone hasli",
-    "inStock": true
-  },
-  {
     "id": "zhumkha",
     "category": "combo",
     "name": "zhumkha",
@@ -140,6 +129,17 @@
     "image": "images/earing-box-1788788343354.jpg",
     "images": [],
     "description": "12 puece of earring with box",
+    "inStock": true
+  },
+  {
+    "id": "hasli",
+    "category": "Necklace",
+    "name": "Hasli",
+    "price": 399,
+    "mrp": 799,
+    "image": "images/hasli-1788793576679.jpg",
+    "images": [],
+    "description": "gold tone hasli",
     "inStock": true
   },
   {
