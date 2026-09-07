@@ -77,6 +77,17 @@
     "inStock": true
   },
   {
+    "id": "zhumkha",
+    "category": "combo",
+    "name": "zhumkha",
+    "price": 549,
+    "mrp": 1099,
+    "image": "images/zhumkha-1788770883356.jpg",
+    "images": [],
+    "description": "kashmiri zumka and dimond set",
+    "inStock": true
+  },
+  {
     "id": "kashmiri-jhumka",
     "category": "Earrings",
     "name": "kashmiri Jhumka",
