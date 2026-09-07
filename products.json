@@ -99,6 +99,17 @@
     "inStock": true
   },
   {
+    "id": "dimond-necklace",
+    "category": "Necklace",
+    "name": "Dimond Necklace",
+    "price": 399,
+    "mrp": 799,
+    "image": "images/dimond-necklace-1788771590981.jpg",
+    "images": [],
+    "description": "dimond set",
+    "inStock": true
+  },
+  {
     "id": "kashmiri-jhumka",
     "category": "Earrings",
     "name": "kashmiri Jhumka",
