@@ -154,6 +154,21 @@
     "inStock": true
   },
   {
+    "id": "ZRN-8905",
+    "category": "Earrings",
+    "name": "Test",
+    "price": 450,
+    "mrp": 699,
+    "image": "images/test-1-1789017811729.jpg",
+    "images": [
+      "images/test-2-1789017811729.jpg",
+      "images/test-3-1789017811729.jpg",
+      "images/test-4-1789017811729.jpg"
+    ],
+    "description": "Beautiful gold-plated earrings (optional)",
+    "inStock": true
+  },
+  {
     "id": "kashmiri-jhumka",
     "category": "Earrings",
     "name": "kashmiri Jhumka",
