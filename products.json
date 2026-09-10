@@ -176,16 +176,5 @@
     "images": [],
     "description": "Beautiful kashmiri zumkha",
     "inStock": true
-  },
-  {
-    "id": "meera-jhumka-11133",
-    "name": "Meera Jhumka",
-    "category": "Earrings",
-    "price": 450,
-    "mrp": 699,
-    "description": "Beautiful gold-plated earrings (optional)",
-    "image": "images/meera-jhumka-11131.jpg",
-    "images": [],
-    "inStock": true
   }
 ]
