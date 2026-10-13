@@ -229,5 +229,16 @@
     "image": "images/trending-watch-1791903004760.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-5470",
+    "category": "Necklace",
+    "name": "Green Necklace",
+    "price": 399,
+    "mrp": 799,
+    "description": "perfect for mehendi rasam",
+    "image": "images/green-necklace-1791903060382.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
