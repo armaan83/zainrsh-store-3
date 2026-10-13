@@ -174,5 +174,16 @@
     "image": "images/pendant-1791902646849.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-9626",
+    "category": "Necklace",
+    "name": "silver necklace",
+    "price": 399,
+    "mrp": 799,
+    "description": "silver necklace with beautiful design look elegant",
+    "image": "images/silver-necklace-1791902726066.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
