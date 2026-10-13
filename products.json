@@ -273,5 +273,16 @@
     "image": "images/pendant-set-1791903185030.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-3343",
+    "category": "Necklace",
+    "name": "white and pink Necklace",
+    "price": 399,
+    "mrp": 799,
+    "description": "so elegant and beautiful delicate",
+    "image": "images/white-and-pink-necklace-1791903236992.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
