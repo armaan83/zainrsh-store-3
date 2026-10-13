@@ -196,5 +196,16 @@
     "image": "images/trendy-watch-1791902805798.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-6135",
+    "category": "Necklace",
+    "name": "white and black Necklace",
+    "price": 299,
+    "mrp": 499,
+    "description": "",
+    "image": "images/white-and-black-necklace-1791902854520.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
