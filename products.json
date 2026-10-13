@@ -163,5 +163,16 @@
     "images": [],
     "description": "Beautiful kashmiri zumkha",
     "inStock": true
+  },
+  {
+    "id": "ZRN-9288",
+    "category": "Necklace",
+    "name": "pendant",
+    "price": 199,
+    "mrp": 0,
+    "description": "",
+    "image": "images/pendant-1791902646849.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
