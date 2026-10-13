@@ -251,5 +251,16 @@
     "image": "images/white-and-green-necklace-1791903093066.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-9765",
+    "category": "Necklace",
+    "name": "pendant",
+    "price": 199,
+    "mrp": 499,
+    "description": "silver pendant",
+    "image": "images/pendant-1791903137356.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
