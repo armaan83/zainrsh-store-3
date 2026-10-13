@@ -185,5 +185,16 @@
     "image": "images/silver-necklace-1791902726066.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-7325",
+    "category": "Watch",
+    "name": "Trendy watch",
+    "price": 499,
+    "mrp": 799,
+    "description": "multiple design available",
+    "image": "images/trendy-watch-1791902805798.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
