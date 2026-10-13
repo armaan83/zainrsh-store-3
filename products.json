@@ -262,5 +262,16 @@
     "image": "images/pendant-1791903137356.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-9152",
+    "category": "Necklace",
+    "name": "pendant set",
+    "price": 399,
+    "mrp": 799,
+    "description": "perfect for marriage season",
+    "image": "images/pendant-set-1791903185030.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
