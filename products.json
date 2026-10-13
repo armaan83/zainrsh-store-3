@@ -240,5 +240,16 @@
     "image": "images/green-necklace-1791903060382.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-2592",
+    "category": "Necklace",
+    "name": "white and green Necklace",
+    "price": 399,
+    "mrp": 799,
+    "description": "",
+    "image": "images/white-and-green-necklace-1791903093066.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
