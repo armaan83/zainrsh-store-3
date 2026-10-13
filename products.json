@@ -218,5 +218,16 @@
     "image": "images/watch-and-kada-combo-1791902931101.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-5660",
+    "category": "Necklace",
+    "name": "trending watch",
+    "price": 499,
+    "mrp": 799,
+    "description": "looks elegant and go for daily work and office work",
+    "image": "images/trending-watch-1791903004760.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
