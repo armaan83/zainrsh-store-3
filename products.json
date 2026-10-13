@@ -207,5 +207,16 @@
     "image": "images/white-and-black-necklace-1791902854520.jpg",
     "images": [],
     "inStock": true
+  },
+  {
+    "id": "ZRN-3944",
+    "category": "watch",
+    "name": "watch and kada combo",
+    "price": 499,
+    "mrp": 799,
+    "description": "",
+    "image": "images/watch-and-kada-combo-1791902931101.jpg",
+    "images": [],
+    "inStock": true
   }
 ]
